@@ -2,6 +2,7 @@ import os
 import configparser
 from ..modules.load_generator import LoadGenerator, Timer
 
+
 class MockTimer(Timer):
     def get_timer(self, delay: int = 60) -> int:
         return 28
@@ -26,7 +27,7 @@ def test_generate_load_files(tmpdir, capfd):
         "DISABLE_HEADER_CHECK": "1",
         "TRAFGEN_NUMBER": "1",
         "LOAD_FILES_NUMBER": "1",
-        "EXT": "@wazo.io"
+        "EXT": "@wazo.io",
     }
 
     config_file = tmpdir.join("genwda-load.conf")
