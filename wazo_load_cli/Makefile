@@ -3,5 +3,13 @@
 REQS = requirements.txt
 install: $(REQS)
 	pip install -r $(REQS)
-	#python3 setup.py install --prefix=/home/user/.local/bin/wlctl
 	pip install --editable .
+
+clean:
+	rm -rf __pycache__/
+	rm -rf build/
+	rm -rf .pytest_cache/
+	rm -rf dist/
+	rm -rf modules/__pycache__/
+	rm -rf wlctl.egg-info/
+	rm wda*.yml
