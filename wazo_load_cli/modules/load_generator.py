@@ -21,6 +21,7 @@ class RandomizedTimer(Timer):
 
 
 class LoadGenerator:
+    """LoadGenerator class aimed to provide load creation file facilities."""
     def __init__(self, load_config: str, load_file: str, timer: Timer) -> None:
         self.timer = timer
         self.config = configparser.ConfigParser()
@@ -85,7 +86,6 @@ class LoadGenerator:
             host_num += 1
             host = f"trafgen{host_num}.load.wazo.io"
             container_num = self.container_track
-            # start_user = self.start_user
             for _ in range(self.clients):
                 container_num += 1
                 self.start_user += 1
@@ -114,11 +114,3 @@ class LoadGenerator:
         file.write("    compose: /etc/trafgen/Docker-compose.yml\n")
         file.write("    forever: True\n")
         self.container_track = self.container_track + self.clients
-
-
-if __name__ == "__main__":
-    randomized_timer = RandomizedTimer()
-    load = LoadGenerator(
-        "/home/user/src/wls/wazo_load_cli/load.ini", "wda", randomized_timer
-    )
-    load.generate_load_files()
