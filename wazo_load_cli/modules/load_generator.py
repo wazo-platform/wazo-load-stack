@@ -22,6 +22,7 @@ class RandomizedTimer(Timer):
 
 class LoadGenerator:
     """LoadGenerator class aimed to provide load creation file facilities."""
+
     def __init__(self, load_config: str, load_file: str, timer: Timer) -> None:
         self.timer = timer
         self.config = configparser.ConfigParser()

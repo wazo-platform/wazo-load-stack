@@ -1,7 +1,12 @@
 import click
+import sys
 import os
 
+from yaml.parser import ParserError
+from requests.exceptions import RequestException
+
 from modules.load_generator import LoadGenerator, RandomizedTimer
+from modules.utils import load_yaml_file, send_json
 
 
 @click.group()
@@ -30,3 +35,33 @@ def create(input, output):
     randomized_timer = RandomizedTimer()
     load = LoadGenerator(input_file_path, output_file_path, randomized_timer)
     load.generate_load_files()
+
+
+@load.command()
+@click.option(
+    '--file',
+    '-f',
+    default=None,
+    help='file is the yaml representation of the load to push.',
+)
+@click.pass_context
+def push(ctx, file):
+    """Push loads on a stack."""
+    if file is None:
+        click.echo("Load file is required.")
+        sys.exit(1)
+
+    config = ctx.obj
+    pilot = config.get("DEFAULT", "pilot")
+
+    try:
+        data = load_yaml_file(file)
+    except ParserError as e:
+        print("Error while parsing the load file.")
+        print(f"Check these error: {e}")
+
+    try:
+        send_json(data, pilot)
+    except RequestException as e:
+        print("An error occured while sending data")
+        print("Error: ", str(e))

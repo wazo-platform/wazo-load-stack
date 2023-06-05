@@ -15,4 +15,4 @@ repos:
     hooks:
       - id: mypy
         language_version: "3.10"
-        additional_dependencies: ["types-pytz", "types-requests"]
+        additional_dependencies: ["types-pytz", "types-requests", "types-PyYaml"]
