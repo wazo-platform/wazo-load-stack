@@ -2,9 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import asyncio
-import yaml
 import queue
-import sys
 from .commands import DockerCmdFactory, ShellCmdFactory
 
 
@@ -63,8 +61,6 @@ async def process_load(load):
     """
     nodes = load.get('load')
     ttl = load.get('ttl')
-    compose = load.get('compose')
-    forever = load.get('forever')
     coroutines = []
 
     # create a queue that will allow coroutine to send status.
