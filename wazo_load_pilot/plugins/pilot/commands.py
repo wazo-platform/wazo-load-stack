@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-#from .http import post_load
 import requests
 
 class Command(ABC):
@@ -9,7 +8,7 @@ class Command(ABC):
         pass
 
 class SendCmd(Command):
-    """Command used to start the container fleet."""
+    """Command used to send a command to a load API instance."""
     def __init__(self, urls, command):
         self.urls = urls
         self.command = command

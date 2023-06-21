@@ -28,7 +28,7 @@ context.load_cert_chain(certfile, keyfile)
 httpd = http.server.HTTPServer((address, port), CustomHandler)
 httpd.socket = context.wrap_socket(httpd.socket)
 
-print(f'Serveur HTTPS en cours d\'exécution sur {address}:{port}')
+print(f'HTTP server running {address}:{port}')
 
 httpd.serve_forever()
 
