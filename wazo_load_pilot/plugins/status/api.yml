@@ -1,0 +1,26 @@
+paths:
+  /status:
+    get:
+      summary: Print infos about internal status of wazo-load-pilot
+      description: ''
+      tags:
+        - status
+      responses:
+        '200':
+          description: The internal infos of wazo-load-pilot
+          schema:
+            $ref: '#/definitions/StatusSummary'
+definitions:
+  StatusSummary:
+    type: object
+    properties:
+      service_token:
+        type: string
+        enum:
+          - ok
+          - fail
+      bus_consumer:
+        type: string
+        enum:
+          - ok
+          - fail
