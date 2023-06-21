@@ -1,0 +1,32 @@
+{
+  "loads": [
+    {
+      "load": [
+        {
+          "node": {
+            "host": "127.0.0.1",
+            "container": "wda-load-test1",
+            "cmd": "sleep 31 && node /usr/src/app/index.js",
+            "env": {
+              "LOGIN": "1001@wazo.io",
+              "PASSWORD": "superpass",
+              "SERVER": "wazo-5000-2.load.wazo.io",
+              "SESSION_DURATION": 300,
+              "DEBUG": 1,
+              "TOKEN_EXPIRATION": 600,
+              "DISABLE_CHATD": 1,
+              "DISABLE_HEADER_CHECK": 1,
+              "REQUEST_TIMEOUT": 300000,
+              "DOCKER": 1
+            }
+          }
+        }
+      ],
+      "ttl": 3,
+      "tag": "wda-load",
+      "compose": "/etc/trafgen/Docker-compose.yml",
+      "forever": true
+    }
+  ]
+}
+
