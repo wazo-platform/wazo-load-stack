@@ -24,8 +24,9 @@ def get_command(node):
         )
         return factory.new()
     else:
-        factory = ShellCmdFactory(cmd=command, servers=[host])
-        return factory.new()
+        # factory = ShellCmdFactory(cmd=command, servers=[host])
+        shell_factory: ShellCmdFactory = ShellCmdFactory(cmd=command, servers=[host])
+        return shell_factory.new()
 
 
 async def process_node(node, ttl, channel):
@@ -66,7 +67,7 @@ async def process_load(load):
     coroutines = []
 
     # create a queue that will allow coroutine to send status.
-    q = asyncio.Queue()
+    q: asyncio.Queue = asyncio.Queue()
 
     # Loop for creating a coroutine for each node in the workload.
     for node in nodes:
@@ -102,7 +103,7 @@ def parse_config(yml):
     parse_config takes the config yaml file as argument.
     It processes each load and put them into the queue.
     """
-    q = queue.Queue()
+    q: queue.Queue = queue.Queue()
     for load in yml["loads"]:
         q.put(load)
 

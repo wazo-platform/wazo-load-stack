@@ -27,6 +27,8 @@ async def process_load(data: dict):
     loop = asyncio.get_event_loop()
     loop.create_task(start_orchestrator(q))
 
-    return {
-        "message": f"Load processing started. To get status, use the following endpoint: /status/{load_id}"
-    }
+    message = (
+        f"Load processing started. To get status, "
+        f"use the following endpoint: /status/{load_id}"
+    )
+    return {"message": message}

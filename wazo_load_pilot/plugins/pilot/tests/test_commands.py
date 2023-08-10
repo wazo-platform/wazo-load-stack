@@ -9,7 +9,8 @@ from ..commands import (
     SendCmd,
     ShellCmdFactory,
 )
-from wazo_load_pilot.plugins.pilot.commands import SendCmd
+
+# from wazo_load_pilot.plugins.pilot.commands import SendCmd
 
 
 def test_cmd_send(requests_mock):
@@ -57,7 +58,10 @@ class TestDockerCmdFactory:
     def test_new(self, factory):
         cmd = factory.new()
         assert isinstance(cmd, SendCmd)
-        expected_command = f'docker exec -e KEY1=value1 -e KEY2=value2 -d {factory.container} bash -c \'{factory.cmd}\''
+        expected_command = (
+            f'docker exec -e KEY1=value1 -e KEY2=value2 -d {factory.container} '
+            f'bash -c \'{factory.cmd}\''
+        )
         assert cmd.command["cmd"] == expected_command
 
 

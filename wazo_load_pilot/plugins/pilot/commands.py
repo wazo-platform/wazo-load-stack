@@ -40,7 +40,10 @@ class MockCmd(Command):
                 pairs.append(f"-e {key.upper()}={value}")
             self.env = ' '.join(pairs)
 
-        self.command = f' echo docker exec {self.env} -d {self.container} bash -c \'{cmd}\' > /dev/null 2>&1 &'
+        self.command = (
+            f'echo docker exec {self.env} -d {self.container} '
+            f'bash -c \'{cmd}\' > /dev/null 2>&1 &'
+        )
         self.host = host
 
     def send(self):
@@ -62,10 +65,10 @@ class DockerComposeCmdFactory(CommandBuilderFactory):
     """Factory used to create a DockerComposeStart command."""
 
     def __init__(self, **kwargs):
-        self.compose = kwargs.get("compose")
-        self.container = kwargs.get("container")
-        self.servers = kwargs.get("servers")
-        self.cmd_tag = kwargs.get("cmd_tag")
+        self.compose = kwargs["compose"]
+        self.container = kwargs["container"]
+        self.servers = kwargs["servers"]
+        self.cmd_tag = kwargs["cmd_tag"]
         self.commands = {
             "start-fleet": f"docker-compose -f {self.compose} up -d",
             "stop-fleet": f"docker-compose -f {self.compose} down",
@@ -77,9 +80,10 @@ class DockerComposeCmdFactory(CommandBuilderFactory):
 
     def new(self):
         urls = []
-        for server in self.servers:
-            url = f"https://{server}/compose"
-            urls.append(url)
+        if self.servers:
+            for server in self.servers:
+                url = f"https://{server}/compose"
+                urls.append(url)
 
         command = {"cmd": self.commands[self.cmd_tag]}
         return SendCmd(urls=urls, command=command)
@@ -113,8 +117,8 @@ class ShellCmdFactory(CommandBuilderFactory):
     """Factory used to create a ShellStart command."""
 
     def __init__(self, **kwargs):
-        self.cmd = kwargs.get("cmd")
-        self.servers = kwargs.get("servers")
+        self.cmd = kwargs["cmd"]
+        self.servers = kwargs["servers"]
 
     def new(self):
 
