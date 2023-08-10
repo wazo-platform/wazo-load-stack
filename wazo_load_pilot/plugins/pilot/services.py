@@ -3,7 +3,7 @@
 
 gateways = []
 
+
 def set_gateways(config):
     global gateways
     gateways = config['gateways']
-

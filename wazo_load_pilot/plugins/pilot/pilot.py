@@ -6,7 +6,6 @@ import queue
 from .commands import DockerCmdFactory, ShellCmdFactory
 
 
-
 def get_command(node):
     if 'host' not in node:
         raise KeyError('Missing required key "host"')
@@ -20,15 +19,18 @@ def get_command(node):
 
     if 'container' in node:
         container = node['container']
-        factory = DockerCmdFactory(container=container, cmd=command, env=env, server=host)
+        factory = DockerCmdFactory(
+            container=container, cmd=command, env=env, server=host
+        )
         return factory.new()
     else:
         factory = ShellCmdFactory(cmd=command, servers=[host])
         return factory.new()
 
+
 async def process_node(node, ttl, channel):
     """
-    Coroutine that connects, processes and disconnect from the remote host. Connection duration 
+    Coroutine that connects, processes and disconnect from the remote host. Connection duration
     is based on the TTL
     """
     node = node.get('node')
@@ -74,6 +76,7 @@ async def process_load(load):
     # The coroutine is waiting for all coroutines terminate
     await asyncio.gather(*coroutines)
 
+
 async def orchestrator(queue):
     """
     This coroutine consumes a queue containing the workload.
@@ -92,6 +95,7 @@ async def orchestrator(queue):
         # break when the queue is empty
         if queue.empty():
             break
+
 
 def parse_config(yml):
     """

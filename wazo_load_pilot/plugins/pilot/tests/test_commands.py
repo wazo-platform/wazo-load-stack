@@ -3,7 +3,12 @@
 
 import pytest
 
-from ..commands import DockerComposeCmdFactory, DockerCmdFactory, SendCmd, ShellCmdFactory
+from ..commands import (
+    DockerComposeCmdFactory,
+    DockerCmdFactory,
+    SendCmd,
+    ShellCmdFactory,
+)
 from wazo_load_pilot.plugins.pilot.commands import SendCmd
 
 
@@ -21,7 +26,7 @@ def test_cmd_send(requests_mock):
         assert "url" in response
         assert response["response"].status_code == 200
 
-    
+
 class TestDockerComposeCmdFactory:
     @pytest.fixture
     def factory(self):
@@ -29,7 +34,9 @@ class TestDockerComposeCmdFactory:
         container = "my_container"
         servers = ["example.com", "test.com"]
         cmd_tag = "start-fleet"
-        return DockerComposeCmdFactory(compose=compose, container=container, servers=servers, cmd_tag=cmd_tag)
+        return DockerComposeCmdFactory(
+            compose=compose, container=container, servers=servers, cmd_tag=cmd_tag
+        )
 
     def test_new(self, factory):
         cmd = factory.new()
@@ -44,7 +51,7 @@ class TestDockerCmdFactory:
         container = "my_container"
         cmd = "start"
         env = {"key1": "value1", "key2": "value2"}
-        server = "example.com" 
+        server = "example.com"
         return DockerCmdFactory(container=container, cmd=cmd, env=env, server=server)
 
     def test_new(self, factory):
@@ -55,10 +62,10 @@ class TestDockerCmdFactory:
 
 
 def test_shell_cmd_factory():
-        servers = ["example.com", "test.com"]
-        cmd = "echo hello"
-        factory = ShellCmdFactory(servers=servers, cmd=cmd)
-        shell_cmd = factory.new()
-        assert isinstance(shell_cmd, SendCmd)
-        assert len(shell_cmd.urls) == len(factory.servers)
-        assert shell_cmd.command["cmd"] == f"bash -c \'{cmd}\'"
+    servers = ["example.com", "test.com"]
+    cmd = "echo hello"
+    factory = ShellCmdFactory(servers=servers, cmd=cmd)
+    shell_cmd = factory.new()
+    assert isinstance(shell_cmd, SendCmd)
+    assert len(shell_cmd.urls) == len(factory.servers)
+    assert shell_cmd.command["cmd"] == f"bash -c \'{cmd}\'"

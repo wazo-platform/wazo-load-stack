@@ -5,19 +5,20 @@ import http.server
 import json
 import ssl
 
+
 class CustomHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers.get('Content-Length', 0))
         post_data = self.rfile.read(content_length).decode('utf-8')
-        
 
         print("JSON reçu :")
         print(post_data)
-        
+
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         self.wfile.write(b'POST request received')
+
 
 address = '127.0.0.1'
 port = 443
@@ -34,5 +35,3 @@ httpd.socket = context.wrap_socket(httpd.socket)
 print(f'HTTP server running {address}:{port}')
 
 httpd.serve_forever()
-
-
