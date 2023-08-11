@@ -9,7 +9,7 @@ from typing import Dict
 api = FastAPI(title='wazo-load-pilot', openapi_url='/api/api.yml')
 
 
-class SysconfdApplication(BaseApplication):
+class PilotApplication(BaseApplication):
     def __init__(self, *args, config: Dict = {}, **kwargs):
         self.config = config or {}
         self.options = {

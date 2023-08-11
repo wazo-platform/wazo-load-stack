@@ -19,13 +19,12 @@ async def start_orchestrator(q):
 async def process_load(data: dict):
     from .pilot import parse_config
 
-    q = parse_config(data)
+    queue = await parse_config(data)
 
     # load ID for tracking progress will be implemented in the next story.
     load_id = uuid.uuid4()
 
-    loop = asyncio.get_event_loop()
-    loop.create_task(start_orchestrator(q))
+    asyncio.create_task(start_orchestrator(queue))
 
     message = (
         f"Load processing started. To get status, "

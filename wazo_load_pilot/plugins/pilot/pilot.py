@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import asyncio
-import queue
 from .commands import DockerCmdFactory, ShellCmdFactory
 
 
@@ -85,26 +84,22 @@ async def orchestrator(queue):
     in charge of processing the load.
     """
     while True:
-        # Waiting for a workload
-        load = queue.get()
-        print(load)
-
-        # Workload processing
-        await process_load(load)
-        queue.task_done()
-
-        # break when the queue is empty
-        if queue.empty():
+        try:
+            load = queue.get_nowait()
+        except asyncio.QueueEmpty:
             break
+        else:
+            await process_load(load)
+            queue.task_done()
 
 
-def parse_config(yml):
+async def parse_config(yml):
     """
     parse_config takes the config yaml file as argument.
     It processes each load and put them into the queue.
     """
-    q: queue.Queue = queue.Queue()
+    q: asyncio.Queue = asyncio.Queue()
     for load in yml["loads"]:
-        q.put(load)
+        await q.put(load)
 
     return q

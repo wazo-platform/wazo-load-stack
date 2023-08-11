@@ -6,7 +6,7 @@ import logging
 
 from xivo import plugin_helpers
 
-from http_server import api, SysconfdApplication
+from http_server import api, PilotApplication
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class Controller:
     def __init__(self, config: dict):
         self.config = config
-        self.http_server = SysconfdApplication('%(prog)s', config=config)
+        self.http_server = PilotApplication('%(prog)s', config=config)
         plugin_manager = plugin_helpers.load(
             namespace='plugins',
             names=config['enabled_plugins'],
