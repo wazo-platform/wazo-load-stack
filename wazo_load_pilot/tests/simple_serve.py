@@ -19,7 +19,7 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(b'POST request received')
 
 
-address = '127.0.0.1'
+address = '0.0.0.0'
 port = 443
 
 certfile = 'tests/certificate.pem'
