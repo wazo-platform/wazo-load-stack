@@ -12,10 +12,7 @@ api = FastAPI(title='wazo-load-pilot', openapi_url='/api/api.yml')
 class PilotApplication(BaseApplication):
     def __init__(self, *args, config: Dict = {}, **kwargs):
         self.config = config or {}
-        self.options = {
-            'ssl_certfile': config['certs']['cert'],
-            'ssl_keyfile': config['certs']['key'],
-        }
+        self.options = {}
         super().__init__(*args, **kwargs)
 
     def load_config(self):
@@ -23,6 +20,8 @@ class PilotApplication(BaseApplication):
         host = self.config['rest_api']['listen']
         port = self.config['rest_api']['port']
         self.cfg.set('bind', [f'{host}:{port}'])
+        self.cfg.set('certfile', self.config['certs']['cert'])
+        self.cfg.set('keyfile', self.config['certs']['key'])
         self.cfg.set('default_proc_name', 'sysconfd-api')
         self.cfg.set('loglevel', self.config['log_level'])
         self.cfg.set('accesslog', '-')
