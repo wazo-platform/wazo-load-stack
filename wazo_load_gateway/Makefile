@@ -1,4 +1,4 @@
-API_TAG = 0.0.1
+API_TAG = 0.0.2
 API_DOCKERFILE = docker/Dockerfile
 API_CONTAINER = wlapi
 API_IMAGE = $(API_CONTAINER)

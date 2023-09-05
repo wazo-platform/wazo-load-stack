@@ -9,4 +9,3 @@ router = APIRouter()
 @router.get('/status', status_code=200)
 async def get_status():
     return {"message": "OK"}
-

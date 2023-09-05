@@ -12,7 +12,6 @@ api = FastAPI(title='wazo-load-api', openapi_url='/api/api.yml')
 class ApiApplication(BaseApplication):
     def __init__(self, *args, config: Dict = {}, **kwargs):
         self.config = config or {}
-        self.options = {}
         super().__init__(*args, **kwargs)
 
     def load_config(self):
