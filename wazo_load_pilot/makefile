@@ -62,10 +62,10 @@ stop-pilot:
 shell-pilot:
 	sudo docker exec -ti $(PILOT_CONTAINER) bash
 
-LOAD_FILE = tests/load-2.json
-HOST = localhost
+LOAD_FILE = tests/load1.json
+HOST = 172.16.43.106
 curl-pilot: $(LOAD_FILE)
-	curl -XPOST http://$(HOST):$(PILOT_PORT)/process-load -d '@$(LOAD_FILE)'
+	curl -k -X POST https://$(HOST):$(PILOT_PORT)/process-load -d '@$(LOAD_FILE)'
 
 
 run-test-servers: run-simple_server run-pilot

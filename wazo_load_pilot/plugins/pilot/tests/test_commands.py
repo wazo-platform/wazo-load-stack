@@ -10,8 +10,6 @@ from ..commands import (
     ShellCmdFactory,
 )
 
-# from wazo_load_pilot.plugins.pilot.commands import SendCmd
-
 
 def test_cmd_send(requests_mock):
     url = "https://example.com/load"

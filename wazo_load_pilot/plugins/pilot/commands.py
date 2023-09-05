@@ -124,7 +124,7 @@ class ShellCmdFactory(CommandBuilderFactory):
 
         urls = []
         for server in self.servers:
-            url = f"https://{server}/load"
+            url = f"https://{server}/run"
             urls.append(url)
 
         command = {"cmd": f'bash -c \'{self.cmd}\''}

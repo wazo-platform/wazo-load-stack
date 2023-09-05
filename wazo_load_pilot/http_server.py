@@ -12,7 +12,7 @@ api = FastAPI(title='wazo-load-pilot', openapi_url='/api/api.yml')
 class PilotApplication(BaseApplication):
     def __init__(self, *args, config: Dict = {}, **kwargs):
         self.config = config or {}
-        self.options = {}
+        # self.options = {}
         super().__init__(*args, **kwargs)
 
     def load_config(self):
