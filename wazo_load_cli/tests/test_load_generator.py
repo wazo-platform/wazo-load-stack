@@ -31,6 +31,7 @@ def test_generate_load_files(tmpdir, capfd):
         "TRAFGEN_NUMBER": "1",
         "LOAD_FILES_NUMBER": "1",
         "EXT": "@wazo.io",
+        "CMD": "node /usr/src/app/index.js",
     }
 
     config_file = tmpdir.join("genwda-load.conf")
@@ -40,9 +41,9 @@ def test_generate_load_files(tmpdir, capfd):
     os.chdir(tmpdir)
 
     mock_timer = MockTimer()
-    load = LoadGenerator(config_file, "wda", mock_timer)
+    load = LoadGenerator(config_file, "/opt/wda", mock_timer)
     load.generate_load_files()
-    load_file = "wda1.yml"
+    load_file = "/opt/wda1"
 
     expected_content = """loads:
   - load:
@@ -66,10 +67,17 @@ def test_generate_load_files(tmpdir, capfd):
     compose: /etc/trafgen/Docker-compose.yml
     forever: True
 """
-
     with open(load_file) as f:
         content = f.read()
         print(content)
         print(out)
         print(err)
-        assert content == expected_content
+        expected_file = tmpdir.join("expected_content.txt")
+        with open(expected_file, "w") as f:
+            f.write(expected_content)
+
+        actual_file = tmpdir.join("actual_content.txt")
+        with open(actual_file, "w") as f:
+            f.write(content)
+        # assert content == expected_content
+        assert expected_content == content

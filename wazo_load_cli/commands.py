@@ -56,6 +56,7 @@ def push(ctx, file):
 
     config = ctx.obj
     pilot = config.get("DEFAULT", "pilot")
+    pilot = f"{pilot}/process-load"
 
     try:
         data = load_yaml_file(file)

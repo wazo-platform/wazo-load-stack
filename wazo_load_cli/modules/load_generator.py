@@ -12,12 +12,12 @@ class Timer(ABC):
     the timer. A timer is injected into the LoadGenerator class."""
 
     @abstractmethod
-    def get_timer(self):
+    def get_timer(self, delay):
         pass
 
 
 class RandomizedTimer(Timer):
-    """Concrete class for the timer, whxich randomizes the delay."""
+    """Concrete class for the timer, which randomizes the delay."""
 
     def get_timer(self, delay: int = 60) -> int:
         return random.randint(1, delay)
@@ -40,9 +40,7 @@ class LoadGenerator:
         self.token_expiration = int(
             self.config.get("DEFAULT", "TOKEN_EXPIRATION", fallback=600)
         )
-        self.delay_cnx_rand = int(
-            self.config.get("DEFAULT", "DELAY_CNX_RAND", fallback=60)
-        )
+        self.delay_cnx_rand = int(self.config.get("DEFAULT", "DELAY_CNX_RAND"))
         self.ttl = int(self.config.get("DEFAULT", "TTL", fallback=30))
         self.server = self.config.get(
             "DEFAULT", "SERVER", fallback="wazo-5000-1.load.wazo.io"
@@ -66,6 +64,9 @@ class LoadGenerator:
         )
         self.ext = self.config.get("DEFAULT", "EXT", fallback="@wazo.io")
         self.load_yaml = load_file
+        self.cmd = self.config.get(
+            "DEFAULT", "CMD", fallback="node /usr/src/app/index.js"
+        )
 
         max_clients_per_node = self.load_sections * self.clients
         if max_clients_per_node > self.containers:
@@ -77,7 +78,7 @@ class LoadGenerator:
 
     def generate_load_files(self) -> None:
         for load_file_num in range(1, self.load_files_number + 1):
-            load_file = f"{self.load_yaml}{load_file_num}.yml"
+            load_file = f"{self.load_yaml}{load_file_num}"
             with open(load_file, "w") as f:
                 f.write("loads:\n")
                 for _ in range(self.load_sections):
@@ -93,13 +94,14 @@ class LoadGenerator:
             for _ in range(self.clients):
                 container_num += 1
                 self.start_user += 1
-                timer = self.timer.get_timer()
                 file.write("    - node:\n")
                 file.write(f"      host: {host}\n")
                 file.write(f"      container: wda-load-test{container_num}\n")
-                file.write(
-                    f'      cmd: "sleep {timer} && node /usr/src/app/index.js"\n'
-                )
+                if self.delay_cnx_rand:
+                    timer = self.timer.get_timer(self.delay_cnx_rand)
+                    file.write(f'      cmd: "sleep {timer} && {self.cmd}"\n')
+                else:
+                    file.write(f'      cmd: "{self.cmd}"\n')
                 file.write("      env:\n")
                 file.write(f"        LOGIN: {self.start_user}{self.ext}\n")
                 file.write("        PASSWORD: superpass\n")
