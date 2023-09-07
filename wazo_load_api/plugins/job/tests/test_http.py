@@ -24,32 +24,3 @@ def test_run_load_success():
         assert "url" in response
         assert response["response"].status_code == 200
 
-# def test_run_load_internal_error(requests_mock):
-#    url = "https://example.com/load"
-#    command = {"invalid_key": "start"}  # Provoquer une KeyError
-
-#    # Configurer requests_mock pour simuler la réponse
-#    requests_mock.post(url, json={"response": "success"})
-
-#    # Envoyer la requête au endpoint "run"
-#    response = client.post("/run", json=command)
-
-#    # Assurer que la réponse a un statut HTTP 200 et que le contenu est conforme à une erreur interne
-#    assert response.status_code == 200
-#    assert response.json() == {"status": "internal_error", "error": "'cmd'"}
-
-#    # Assurer que la clé d'erreur "cmd" est présente dans la réponse JSON
-
-#def test_run_load_exception(requests_mock):
-#    url = "https://example.com/load"
-#    command = {"cmd": "start"}
-
-#    # Configurer requests_mock pour simuler une exception lors de l'appel
-#    requests_mock.post(url, exc=Exception("Simulated exception"))
-
-#    # Envoyer la requête au endpoint "run"
-#    response = client.post("/run", json=command)
-
-#    # Assurer que la réponse a un statut HTTP 200 et que le contenu est conforme à une erreur interne
-#    assert response.status_code == 200
-#    assert response.json() == {"status": "internal_error", "error": "Simulated exception"}
