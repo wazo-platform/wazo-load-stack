@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from .services import run
 
 router = APIRouter()
@@ -13,10 +13,11 @@ async def run_load(payload: dict):
     try:
         command = payload["cmd"]
     except KeyError as e:
-        return {"status": "internal_error", "error": str(e)}
+        raise HTTPException(status_code=500, detail={'status': 'internal_error', 'error': str(e)})
 
     try:
         await run(command)
-        return {"status": "ok"}
     except Exception as e:
-        return {"status": "internal_error", "error": str(e)}
+        raise HTTPException(status_code=500, detail={'status': 'internal_error', 'error': str(e)})
+
+    return {"status": "ok"}

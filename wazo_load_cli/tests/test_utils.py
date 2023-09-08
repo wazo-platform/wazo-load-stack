@@ -8,6 +8,7 @@ from ..modules.utils import send_json, load_yaml_file
 def test_load_yaml_file(tmpdir):
     """test_load_yaml_file takes one argument: tmpdir.
     tmpdir is a fixture provided by pytest for temporary directory creation."""
+
     # Create a temporary yaml file for the tests
     data = {'key': 'value'}
     file_path = tmpdir.join("test.yaml")
@@ -34,5 +35,4 @@ def test_send_json(requests_mock):
     assert requests_mock.called
     assert requests_mock.last_request.url == url
 
-    # assert isinstance(requests_mock.last_request.json(), str)
     assert requests_mock.last_request.json() == data

@@ -18,7 +18,7 @@ setup(
     package_data={'plugins': ['*/api.yml']},
     entry_points={
         'console_scripts': [
-            f'{NAME}=main:main',
+            f'{NAME}=wlapi-plugins',
         ],
         'plugins': [
             'job = plugins.job.plugin:Plugin',

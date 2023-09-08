@@ -22,7 +22,7 @@ _DEFAULT_CONFIG = {
         'private_key': '/etc/wazo-load-api/private.key',
         'cors': {
             'enabled': True,
-            'allow_headers': ['Content-Type', 'X-Auth-Token'],
+            'allow_headers': ['Content-Type'],
         },
         'max_threads': 10,
     },

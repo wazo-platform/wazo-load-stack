@@ -5,7 +5,6 @@ import subprocess
 
 
 async def run(cmd):
-    print(cmd)
     try:
         return (
             subprocess.check_output(cmd, shell=True, stderr=subprocess.PIPE)
