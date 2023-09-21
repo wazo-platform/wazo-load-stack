@@ -17,9 +17,6 @@ def test_generate_load_files(tmpdir, capfd):
     config = configparser.ConfigParser()
     config["DEFAULT"] = {
         "DEBUG": "1",
-        "DISABLE_CHATD": "0",
-        "DURATION": "300",
-        "TOKEN_EXPIRATION": "600",
         "DELAY_CNX_RAND": "60",
         "TTL": "30",
         "SERVER": "router-1.load.wazo.io",
@@ -32,7 +29,10 @@ def test_generate_load_files(tmpdir, capfd):
         "LOAD_FILES_NUMBER": "1",
         "EXT": "@wazo.io",
         "CMD": "node /usr/src/app/index.js",
+        "COMPOSE": "/etc/trafgen/docker-compose.yml",
+        "PASSWORD": "superpass",
     }
+    config["WDA"] = {"DISABLE_CHATD": "0", "DURATION": "300", "TOKEN_EXPIRATION": "600"}
 
     config_file = tmpdir.join("genwda-load.conf")
     with open(config_file, "w") as f:
@@ -79,5 +79,4 @@ def test_generate_load_files(tmpdir, capfd):
         actual_file = tmpdir.join("actual_content.txt")
         with open(actual_file, "w") as f:
             f.write(content)
-        # assert content == expected_content
         assert expected_content == content
