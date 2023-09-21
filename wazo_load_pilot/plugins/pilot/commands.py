@@ -16,14 +16,16 @@ class Command(ABC):
 class SendCmd(Command):
     """Command used to send a command to a load API instance."""
 
-    def __init__(self, urls, command):
+    def __init__(self, urls, command, environment=None):
         self.urls = urls
         self.command = command
+        self.environment = environment
 
     def send(self):
         responses = []
+        payload = {'cmd': self.command, 'env': self.environment}
         for url in self.urls:
-            response = requests.post(url, json=self.command, verify=False)
+            response = requests.post(url, json=payload, verify=False)
             responses.append({"response": response, "url": url})
         return responses
 
@@ -114,18 +116,30 @@ class DockerCmdFactory(CommandBuilderFactory):
 
 
 class ShellCmdFactory(CommandBuilderFactory):
-    """Factory used to create a ShellStart command."""
+    """Factory used to create a Shell command."""
 
     def __init__(self, **kwargs):
-        self.cmd = kwargs["cmd"]
-        self.servers = kwargs["servers"]
+        try:
+            self.cmd = kwargs["cmd"]
+        except KeyError:
+            self.cmd = None
+        try:
+            self.env = kwargs["envronment"]
+        except KeyError:
+            self.env = None
+        try:
+            self.cluster = kwargs["cluster"]
+        except KeyError:
+            self.cluster = None
+        try:
+            self.protocol = kwargs["protocol"]
+        except KeyError:
+            self.protocol = 'http'
 
     def new(self):
-
         urls = []
-        for server in self.servers:
-            url = f"https://{server}/run"
-            urls.append(url)
+        url = f"{self.protocol}://{self.cluster['host']}:{self.cluster['port']}/run"
+        urls.append(url)
 
-        command = {"cmd": f'bash -c \'{self.cmd}\''}
-        return SendCmd(urls=urls, command=command)
+        self.command = f'bash -c \'{self.cmd}\''
+        return SendCmd(urls=urls, command=self.command, environment=self.env)

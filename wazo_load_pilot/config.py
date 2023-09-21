@@ -26,6 +26,11 @@ _DEFAULT_CONFIG = {
         },
         'max_threads': 10,
     },
+    'load_cluster': {
+        'protocol': 'http',
+        'host': 'trafgen.load.wazo.io',
+        'port': '9999',
+    },
     'gateways': [
         'trafgen1.load.wazo.io',
         'trafgen2.load.wazo.io',

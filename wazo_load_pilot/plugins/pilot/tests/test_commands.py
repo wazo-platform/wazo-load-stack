@@ -14,9 +14,10 @@ from ..commands import (
 def test_cmd_send(requests_mock):
     url = "https://example.com/load"
     command = {"cmd": "start"}
+    environ = {"env": "'LOGIN': '1004@example.com'"}
 
     requests_mock.post(f"{url}", json={"response": "success"})
-    send_cmd = SendCmd(urls=[url], command=command)
+    send_cmd = SendCmd(urls=[url], command=command, environment=environ)
 
     responses = send_cmd.send()
 
@@ -66,8 +67,12 @@ class TestDockerCmdFactory:
 def test_shell_cmd_factory():
     servers = ["example.com", "test.com"]
     cmd = "echo hello"
-    factory = ShellCmdFactory(servers=servers, cmd=cmd)
+    environ = {"env": "'LOGIN': '1004@example.com'"}
+    cluster = {'protocol': 'http', 'host': 'load.example.com', 'port': '443'}
+
+    factory = ShellCmdFactory(
+        servers=servers, cmd=cmd, environment=environ, cluster=cluster
+    )
     shell_cmd = factory.new()
     assert isinstance(shell_cmd, SendCmd)
-    assert len(shell_cmd.urls) == len(factory.servers)
-    assert shell_cmd.command["cmd"] == f"bash -c \'{cmd}\'"
+    assert shell_cmd.command == f'bash -c \'{cmd}\''

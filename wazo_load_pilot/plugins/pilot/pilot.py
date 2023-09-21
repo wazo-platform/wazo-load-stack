@@ -3,18 +3,17 @@
 
 import asyncio
 from .commands import ShellCmdFactory
+from .services import cluster
 
 
 def get_command(node):
-    if 'host' not in node:
-        raise KeyError('Missing required key "host"')
-    host = node.get('host')
-
     if 'cmd' not in node:
         raise KeyError('Missing required key "cmd"')
     command = node['cmd']
-
-    shell_factory: ShellCmdFactory = ShellCmdFactory(cmd=command, servers=[host])
+    env = node.get('env')
+    shell_factory: ShellCmdFactory = ShellCmdFactory(
+        cmd=command, env=env, cluster=cluster
+    )
     return shell_factory.new()
 
 
@@ -23,9 +22,7 @@ async def process_node(node, ttl, channel):
     Coroutine that connects, processes and disconnect from the remote host. Connection duration
     is based on the TTL
     """
-    host = node.get('host')
-    if not host:
-        raise KeyError('Missing required key "host"')
+    # channel not used yet
 
     cmd = get_command(node)
     print(cmd.send())

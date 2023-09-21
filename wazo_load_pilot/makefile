@@ -44,7 +44,7 @@ stop-simple-server:
 
 .PHONY: build-pilot run-pilot shell-pilot curl-pilot
 
-PILOT_TAG = 0.0.1
+PILOT_TAG = 1.0.0
 PILOT_DOCKERFILE = docker/pilot.Dockerfile
 PILOT_CONTAINER = wlpd
 PILOT_IMAGE = $(PILOT_CONTAINER)

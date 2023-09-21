@@ -2,7 +2,8 @@ FROM python:3.10-bullseye
 
 COPY etc /etc
 COPY . /opt
-COPY tests/start-wlpd.sh /start-wlpd.sh
+COPY etc/resolv.conf /etc/resolv.conf.override
+COPY start-wlpd.sh /start-wlpd.sh
 
 WORKDIR /opt
 RUN pip install --upgrade pip
