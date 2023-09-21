@@ -31,20 +31,15 @@ class LoadGenerator:
         self.config = configparser.ConfigParser()
         self.config.read(load_config)
 
+        # Extract DEFAULT section
         self.debug = int(self.config.get("DEFAULT", "DEBUG", fallback=1))
         self.docker = int(self.config.get("DEFAULT", "DOCKER", fallback=1))
-        self.disable_chatd = int(
-            self.config.get("DEFAULT", "DISABLE_CHATD", fallback=1)
-        )
-        self.duration = int(self.config.get("DEFAULT", "DURATION", fallback=300))
-        self.token_expiration = int(
-            self.config.get("DEFAULT", "TOKEN_EXPIRATION", fallback=600)
-        )
         self.delay_cnx_rand = int(self.config.get("DEFAULT", "DELAY_CNX_RAND"))
         self.ttl = int(self.config.get("DEFAULT", "TTL", fallback=30))
         self.server = self.config.get(
             "DEFAULT", "SERVER", fallback="wazo-5000-1.load.wazo.io"
         )
+        self.port = int(self.config.get("DEFAULT", "PORT", fallback=9900))
         self.load_sections = int(
             self.config.get("DEFAULT", "LOAD_SECTIONS", fallback=10)
         )
@@ -67,44 +62,39 @@ class LoadGenerator:
         self.cmd = self.config.get(
             "DEFAULT", "CMD", fallback="node /usr/src/app/index.js"
         )
+        self.password = self.config.get("DEFAULT", "PASSWORD", fallback="your_password")
+        self.tag = self.config.get("DEFAULT", "TAG", fallback="wda-load")
+        self.compose = self.config.get(
+            "DEFAULT", "COMPOSE", fallback="/etc/trafgen/docker-compose.yml"
+        )
 
-        max_clients_per_node = self.load_sections * self.clients
-        if max_clients_per_node > self.containers:
-            print("Cannot run such amount of clients on", self.containers, "containers")
-            exit(1)
+        # Extract WDA section
+        self.disable_chatd = int(self.config.get("WDA", "DISABLE_CHATD", fallback=1))
+        self.duration = int(self.config.get("WDA", "DURATION", fallback=300))
+        self.token_expiration = int(
+            self.config.get("WDA", "TOKEN_EXPIRATION", fallback=600)
+        )
 
         self.start_user = 1000
-        self.container_track = 0
+        self.track_file = 10000
 
     def generate_load_files(self) -> None:
-        for load_file_num in range(1, self.load_files_number + 1):
-            load_file = f"{self.load_yaml}{load_file_num}"
-            with open(load_file, "w") as f:
-                f.write("loads:\n")
-                for _ in range(self.load_sections):
-                    f.write("  - load:\n")
-                    self.generate_load_section(f)
+        with open(self.load_yaml, "w") as f:
+            f.write("loads:\n")
+            for _ in range(self.load_sections):
+                f.write("  - load:\n")
+                self.generate_load_section(f)
 
     def generate_load_section(self, file: TextIO) -> None:
-        host_num = 0
         for _ in range(self.trafgen_number):
-            host_num += 1
-            host = f"trafgen{host_num}.load.wazo.io"
-            container_num = self.container_track
             for _ in range(self.clients):
-                container_num += 1
                 self.start_user += 1
+                self.track_file += 2
                 file.write("    - node:\n")
-                file.write(f"      host: {host}\n")
-                file.write(f"      container: wda-load-test{container_num}\n")
-                if self.delay_cnx_rand:
-                    timer = self.timer.get_timer(self.delay_cnx_rand)
-                    file.write(f'      cmd: "sleep {timer} && {self.cmd}"\n')
-                else:
-                    file.write(f'      cmd: "{self.cmd}"\n')
+                file.write(f'      cmd: "{self.cmd}"\n')
                 file.write("      env:\n")
                 file.write(f"        LOGIN: {self.start_user}{self.ext}\n")
-                file.write("        PASSWORD: superpass\n")
+                file.write(f"        PASSWORD: {self.password}\n")
                 file.write(f"        SERVER: {self.server}\n")
                 file.write(f"        SESSION_DURATION: {self.duration}\n")
                 file.write(f"        DEBUG: {self.debug}\n")
@@ -116,7 +106,6 @@ class LoadGenerator:
                 file.write(f"        REQUEST_TIMEOUT: {self.request_timeout}\n")
                 file.write(f"        DOCKER: {self.docker}\n")
         file.write(f"    ttl: {self.ttl}\n")
-        file.write("    tag: wda-load\n")
-        file.write("    compose: /etc/trafgen/Docker-compose.yml\n")
+        file.write(f"    tag: {self.tag}\n")
+        file.write(f"    compose: {self.compose}\n")
         file.write("    forever: True\n")
-        self.container_track = self.container_track + self.clients
