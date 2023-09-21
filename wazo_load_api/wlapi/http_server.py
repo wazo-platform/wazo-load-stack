@@ -15,7 +15,6 @@ class ApiApplication(BaseApplication):
         super().__init__(*args, **kwargs)
 
     def load_config(self):
-        print(f"config: {self.config}")
         host = self.config['rest_api']['listen']
         port = self.config['rest_api']['port']
         self.cfg.set('bind', [f'{host}:{port}'])

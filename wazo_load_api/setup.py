@@ -15,14 +15,14 @@ setup(
     author_email='dev@wazo.io',
     url='https://wazo-platform.org',
     packages=find_packages(),
-    package_data={'plugins': ['*/api.yml']},
+    package_data={'wlapi.plugins': ['*/api.yml']},
     entry_points={
         'console_scripts': [
-            f'{NAME}=wlapi-plugins',
+            f'{NAME}=wlapi.main:main',
         ],
         'plugins': [
-            'job = plugins.job.plugin:Plugin',
-            'status = plugins.status.plugin:Plugin',
+            'job = wlapi.plugins.job.plugin:Plugin',
+            'status = wlapi.plugins.status.plugin:Plugin',
         ],
     },
 )

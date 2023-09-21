@@ -6,7 +6,7 @@ import logging
 
 from xivo import plugin_helpers
 
-from http_server import api, ApiApplication
+from wlapi.http_server import api, ApiApplication
 
 logger = logging.getLogger(__name__)
 

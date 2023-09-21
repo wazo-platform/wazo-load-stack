@@ -4,10 +4,10 @@
 import subprocess
 
 
-async def run(cmd):
+async def run(cmd, environ):
     try:
         return (
-            subprocess.check_output(cmd, shell=True, stderr=subprocess.PIPE)
+            subprocess.check_output(cmd, env=environ, shell=True, stderr=subprocess.PIPE)
             .decode('utf-8')
             .strip()
         )
