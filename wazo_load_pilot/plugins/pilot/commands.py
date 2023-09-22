@@ -124,7 +124,7 @@ class ShellCmdFactory(CommandBuilderFactory):
         except KeyError:
             self.cmd = None
         try:
-            self.env = kwargs["envronment"]
+            self.env = kwargs["env"]
         except KeyError:
             self.env = None
         try:
