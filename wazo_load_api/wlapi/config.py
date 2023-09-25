@@ -6,51 +6,34 @@ import argparse
 from xivo.chain_map import ChainMap
 from xivo.config_helper import read_config_file_hierarchy
 
-_DEFAULT_HTTPS_PORT = 9990
+_DEFAULT_HTTPS_PORT = 9900
 
 _DEFAULT_CONFIG = {
-    'config_file': '/etc/wazo-load-pilot/config.yml',
+    'config_file': '/etc/wazo-load-api/config.yml',
     'debug': False,
-    'extra_config_files': '/etc/wazo-load-pilot/conf.d',
-    'log_file': '/var/log/wazo-load-pilot.log',
+    'extra_config_files': '/etc/wazo-load-api/conf.d',
+    'log_file': '/var/log/wazo-load-api.log',
     'log_level': 'info',
-    'user': 'wazo-pilot',
+    'user': 'wazo-api',
     'rest_api': {
         'listen': '0.0.0.0',
         'port': _DEFAULT_HTTPS_PORT,
-        'certificate': None,
-        'private_key': None,
+        'certificate': '/etc/wazo-load-api/certificate.pem',
+        'private_key': '/etc/wazo-load-api/private.key',
         'cors': {
             'enabled': True,
-            'allow_headers': ['Content-Type', 'X-Auth-Token'],
+            'allow_headers': ['Content-Type'],
         },
         'max_threads': 10,
     },
-    'load_cluster': {
-        'protocol': 'http',
-        'host': 'trafgen.load.wazo.io',
-        'port': '9999',
-    },
-    'gateways': [
-        'trafgen1.load.wazo.io',
-        'trafgen2.load.wazo.io',
-        'trafgen3.load.wazo.io',
-        'trafgen4.load.wazo.io',
-        'trafgen5.load.wazo.io',
-        'trafgen6.load.wazo.io',
-        'trafgen7.load.wazo.io',
-        'trafgen8.load.wazo.io',
-        'trafgen9.load.wazo.io',
-        'trafgen10.load.wazo.io',
-    ],
     'enabled_plugins': {
-        'pilot': True,
+        'job': True,
         'status': True,
     },
     'certs': {
-        'csr': '/etc/wazo-load-pilot/certificate.csr',
-        'cert': '/etc/wazo-load-pilot/certificate.pem',
-        'key': '/etc/wazo-load-pilot/private.key',
+        'csr': '/etc/wazo-load-api/certificate.csr',
+        'cert': '/etc/wazo-load-api/certificate.pem',
+        'key': '/etc/wazo-load-api/private.key',
     },
 }
 

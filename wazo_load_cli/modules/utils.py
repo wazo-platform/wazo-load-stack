@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import configparser
-import json
 import os
 import requests
 import yaml
@@ -31,9 +30,8 @@ def load_yaml_file(file_path: str) -> Any:
 
 def send_json(data: Dict, url: str) -> None:
     """send_json takes a dictionary and send it to the url as json data."""
-    data_json = json.dumps(data)
 
-    response = requests.post(url, json=data_json)
+    response = requests.post(url, json=data, verify=False)
 
     if response.status_code == 200:
         print(f"Data succesfully sent to {url}")

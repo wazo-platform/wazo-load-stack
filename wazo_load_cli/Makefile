@@ -13,3 +13,9 @@ clean:
 	rm -rf modules/__pycache__/
 	rm -rf wlctl.egg-info/
 	rm wda*.yml
+
+IMAGE = wlctl
+TAG = 0.0.1
+DOCKERFILE = docker/Dockerfile
+build-cli: $(DOCKERFILE)
+	sudo docker build -t $(IMAGE):$(TAG) -f $(DOCKERFILE) .

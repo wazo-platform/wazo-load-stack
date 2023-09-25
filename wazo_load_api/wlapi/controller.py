@@ -6,7 +6,7 @@ import logging
 
 from xivo import plugin_helpers
 
-from http_server import api, PilotApplication
+from wlapi.http_server import api, ApiApplication
 
 logger = logging.getLogger(__name__)
 
@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 class Controller:
     def __init__(self, config: dict):
         self.config = config
-        self.http_server = PilotApplication('%(prog)s', config=config)
+        self.http_server = ApiApplication('%(prog)s', config=config)
         plugin_manager = plugin_helpers.load(
-            namespace='wlpd_plugins',
+            namespace='wlapi_plugins',
             names=config['enabled_plugins'],
             dependencies={
                 'api': api,
@@ -31,5 +31,5 @@ class Controller:
         return url_list
 
     def run(self):
-        logger.info('wazo-load-pilot starting...')
+        logger.info('wazo-load-api starting...')
         self.http_server.run()

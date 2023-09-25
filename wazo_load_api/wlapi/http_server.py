@@ -6,17 +6,15 @@ from gunicorn.app.base import BaseApplication
 from typing import Dict
 
 
-api = FastAPI(title='wazo-load-pilot', openapi_url='/api/api.yml')
+api = FastAPI(title='wazo-load-api', openapi_url='/api/api.yml')
 
 
-class PilotApplication(BaseApplication):
+class ApiApplication(BaseApplication):
     def __init__(self, *args, config: Dict = {}, **kwargs):
         self.config = config or {}
-        # self.options = {}
         super().__init__(*args, **kwargs)
 
     def load_config(self):
-        print(f"config: {self.config}")
         host = self.config['rest_api']['listen']
         port = self.config['rest_api']['port']
         self.cfg.set('bind', [f'{host}:{port}'])

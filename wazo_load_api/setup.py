@@ -6,23 +6,23 @@ from setuptools import setup
 from setuptools import find_packages
 
 
-NAME = 'wlpd'
+NAME = 'wlapi'
 setup(
     name=NAME,
     version='1.0',
     author='Wazo Authors',
-    description='Wazo Load Pilot',
+    description='Wazo Load API',
     author_email='dev@wazo.io',
     url='https://wazo-platform.org',
     packages=find_packages(),
-    package_data={'plugins': ['*/api.yml']},
+    package_data={'wlapi.plugins': ['*/api.yml']},
     entry_points={
         'console_scripts': [
-            f'{NAME}=main:main',
+            f'{NAME}=wlapi.main:main',
         ],
-        'wlpd_plugins': [
-            'pilot = plugins.pilot.plugin:Plugin',
-            'status = plugins.status.plugin:Plugin',
+        'wlapi_plugins': [
+            'job = wlapi.plugins.job.plugin:Plugin',
+            'status = wlapi.plugins.status.plugin:Plugin',
         ],
     },
 )

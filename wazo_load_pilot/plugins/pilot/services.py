@@ -2,8 +2,14 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 gateways = []
+cluster = {}
 
 
 def set_gateways(config):
     global gateways
     gateways = config['gateways']
+
+
+def set_cluster(config):
+    global cluster
+    cluster = config['load_cluster']
