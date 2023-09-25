@@ -20,7 +20,7 @@ setup(
         'console_scripts': [
             f'{NAME}=main:main',
         ],
-        'plugins': [
+        'wlpd_plugins': [
             'pilot = plugins.pilot.plugin:Plugin',
             'status = plugins.status.plugin:Plugin',
         ],

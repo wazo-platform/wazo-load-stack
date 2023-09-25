@@ -16,7 +16,7 @@ class Controller:
         self.config = config
         self.http_server = ApiApplication('%(prog)s', config=config)
         plugin_manager = plugin_helpers.load(
-            namespace='plugins',
+            namespace='wlapi_plugins',
             names=config['enabled_plugins'],
             dependencies={
                 'api': api,

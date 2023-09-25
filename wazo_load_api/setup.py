@@ -20,7 +20,7 @@ setup(
         'console_scripts': [
             f'{NAME}=wlapi.main:main',
         ],
-        'plugins': [
+        'wlapi_plugins': [
             'job = wlapi.plugins.job.plugin:Plugin',
             'status = wlapi.plugins.status.plugin:Plugin',
         ],
