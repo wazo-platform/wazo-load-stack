@@ -68,7 +68,6 @@ COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /usr/local/bin/start-wlapi /usr/local/bin/start-wlapi
 COPY --from=builder /usr/src/wlapi /usr/src/wlapi
 COPY --from=builder /etc /etc
-COPY wlapi/docker/testcall.mp3 /testcall.mp3
 COPY wlapi/docker/.baresip /root/.baresip
 
 RUN ldconfig
