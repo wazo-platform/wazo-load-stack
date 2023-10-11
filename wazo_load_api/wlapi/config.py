@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import argparse
+import os
 
 from xivo.chain_map import ChainMap
 from xivo.config_helper import read_config_file_hierarchy
@@ -37,12 +38,16 @@ _DEFAULT_CONFIG = {
     },
 }
 
+def env_config():
+    api_port = os.getenv("API_PORT")
+    if api_port is None:
+        return {}
+    return {'rest_api': {'port': api_port}}
 
 def load_config(args):
     cli_config = _parse_cli_args(args)
     file_config = read_config_file_hierarchy(ChainMap(cli_config, _DEFAULT_CONFIG))
-    return ChainMap(file_config, _DEFAULT_CONFIG)
-
+    return ChainMap(cli_config, env_config(), file_config, _DEFAULT_CONFIG)
 
 def _parse_cli_args(argv):
     parser = argparse.ArgumentParser()
