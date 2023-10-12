@@ -1,6 +1,6 @@
 .PHONY: build-api run-api stop-api clean api install 
 
-API_TAG = 1.0.0
+API_TAG = 1.0.4
 API_DOCKERFILE = wlapi/docker/Dockerfile
 API_IMAGE = wlapi
 API_CONTAINER = $(API_IMAGE)-2
@@ -9,7 +9,15 @@ build-api: $(API_DOCKERFILE)
 
 API_PORT = 9900
 run-api: stop-api 
-	sudo docker run -p $(API_PORT):$(API_PORT) --rm --name $(API_CONTAINER) -d $(API_IMAGE):$(API_TAG)
+	sudo docker run -ti --rm --name $(API_CONTAINER) \
+	-p $(API_PORT):$(API_PORT) \
+	--env PULSE_SERVER=unix:/tmp/pulseaudio.socket \
+	--env PULSE_COOKIE=/tmp/pulseaudio.cookie \
+	--volume /tmp/pulseaudio.socket:/tmp/pulseaudio.socket \
+    --volume /tmp/pulseaudio.client.conf:/etc/pulse/client.conf \
+	--device=/dev/snd:/dev/snd \
+	$(API_IMAGE):$(API_TAG) bash
+
 stop-api:
 	-sudo docker stop $(API_CONTAINER)
 	-sudo docker rm $(API_CONTAINER)
