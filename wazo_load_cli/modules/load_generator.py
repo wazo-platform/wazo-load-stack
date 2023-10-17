@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from typing import TextIO
 import yaml
 import copy
-import hcl
 import sys
 
 
@@ -29,6 +28,43 @@ class GlobalLoadSection(LoadSection):
     def generate_load_section(self) -> list:
         return {"ttl": self.ttl}
 
+class BareSIPLoadSection(LoadSection):
+    def __init__(self, config: configparser.ConfigParser):
+        self.ttl = int(config.get("BARESIP", "TTL", fallback=30))
+        self.command = config.get("BARESIP", "CMD")
+        self.start_line = int(config.get("BARESIP", "START_LINE"))
+        self.end_line = int(config.get("BARESIP", "END_LINE"))
+        self.password = config.get("BARESIP", "PASSWORD", fallback=None)
+        self.stack = config.get("BARESIP", "STACK")
+        self.call_duration = int(config.get("BARESIP", "CALL_DURATION"))
+        self.load_sections = int(config.get("BARESIP", "LOAD_SECTIONS"))
+        self.load_jobs = int(config.get("BARESIP", "LOAD_JOBS"))
+
+    def generate_load_section(self) -> list:
+        loads = []
+        for _ in range(self.load_sections):
+            jobs = []
+            line = self.start_line
+            for _ in range(self.load_jobs):
+                if not self.password:
+                    self.password = line
+
+                load_job = {
+                    "cmd": self.command,
+                    "env": {
+                        "LOGIN": f"{line}@{self.stack}",
+                        "PASSWORD": self.password,
+                        "STACK": self.stack,
+                    },
+                }
+                if line < self.end_line:
+                    line += 1
+                else:
+                    line = self.start_line
+                jobs.append(copy.deepcopy(load_job))
+            loads.append({"load":jobs,"ttl":self.ttl})
+
+        return loads
 
 class WDALoadSection(LoadSection):
     def __init__(self, config: configparser.ConfigParser):
@@ -38,7 +74,7 @@ class WDALoadSection(LoadSection):
             self.user_start = int(config.get("WDA", "USER_START"))
             self.user_end = int(config.get("WDA", "USER_END"))
             self.extension = config.get("WDA", "EXT")
-            self.password = config.get("WDA", "PASSWORD")
+            self.password = config.get("WDA", "PASSWORD", fallback=None)
             self.stack = config.get("WDA", "STACK")
             self.disable_chatd = int(config.get("WDA", "DISABLE_CHATD", fallback=1))
             self.duration = int(config.get("WDA", "DURATION", fallback=300))
@@ -67,12 +103,10 @@ class WDALoadSection(LoadSection):
         loads = []
         for _ in range(self.load_sections):
             jobs = []
-            user_start = self.user_start
+            user = self.user_start
             for _ in range(self.load_jobs):
-                if user_start < self.user_end:
-                    user_start += 1
-                else:
-                    user_start = self.user_start
+                if not self.password:
+                    self.password = user
 
                 load_job = {
                     "node": {
@@ -81,9 +115,9 @@ class WDALoadSection(LoadSection):
                             "SESSION_DURATION": self.duration,
                             "TOKEN_EXPIRATION": self.token_expiration,
                             "DISABLE_CHATD": self.disable_chatd,
-                            "LOGIN": f"{user_start}{self.extension}",
+                            "LOGIN": f"{user}@{self.extension}",
                             "PASSWORD": self.password,
-                            "STACK": self.stack,
+                            "SERVER": self.stack,
                             "DEBUG": self.debug,
                             "DISABLE_HEADER_CHECK": self.disable_header_check,
                             "REQUEST_TIMEOUT": self.request_timeout,
@@ -91,8 +125,11 @@ class WDALoadSection(LoadSection):
                         }
                     },
                 }
+                if user < self.user_end:
+                    user += 1
+                else:
+                    user = self.user_start
                 jobs.append(copy.deepcopy(load_job))
-            #loads.append(yaml.dump({"load":jobs,"ttl":self.ttl}, indent=2, width=1000))
             loads.append({"load":jobs,"ttl":self.ttl})
 
         return loads

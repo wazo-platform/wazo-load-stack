@@ -8,7 +8,7 @@ import os
 from yaml.parser import ParserError
 from requests.exceptions import RequestException
 
-from modules.load_generator import LoadGenerator, RandomizedTimer
+from modules.load_generator import LoadGenerator, RandomizedTimer, Configuration
 from modules.utils import load_yaml_file, send_json
 
 
@@ -35,9 +35,10 @@ def create(input, output):
     """Create a load file"""
     input_file_path = os.path.expanduser(input)
     output_file_path = os.path.expanduser(output)
-    randomized_timer = RandomizedTimer()
-    load = LoadGenerator(input_file_path, output_file_path, randomized_timer)
-    load.generate_load_files()
+    timer = RandomizedTimer()
+    configuration = Configuration(input_file_path)
+    load_generator = LoadGenerator(output_file_path, timer, configuration)
+    load_generator.generate_load_files()
 
 
 @load.command()
