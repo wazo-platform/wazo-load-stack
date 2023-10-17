@@ -36,8 +36,8 @@ def create(input, output):
     input_file_path = os.path.expanduser(input)
     output_file_path = os.path.expanduser(output)
     timer = RandomizedTimer()
-    configuration = Configuration(input_file_path)
-    load_generator = LoadGenerator(output_file_path, timer, configuration)
+    configuration = Configuration(input_file_path, timer)
+    load_generator = LoadGenerator(output_file_path, configuration)
     load_generator.generate_load_files()
 
 
