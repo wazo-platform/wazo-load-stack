@@ -8,8 +8,8 @@ import os
 from yaml.parser import ParserError
 from requests.exceptions import RequestException
 
-from modules.load_generator import LoadGenerator, RandomizedTimer, Configuration
-from modules.utils import load_yaml_file, send_json
+from wlctl.modules.load_generator import LoadGenerator, RandomizedTimer, Configuration
+from wlctl.modules.utils import load_yaml_file, send_json
 
 
 @click.group()

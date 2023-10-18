@@ -1,0 +1,13 @@
+- node:
+  cmd: {{ CMD }}
+  env:
+    DEBUG: {{ DEBUG }}
+    DISABLE_CHATD: {{ CHATD }}
+    DISABLE_HEADER_CHECK: {{ CHECK }}
+    DOCKER: {{ DOCKER_STATUS }}
+    LOGIN: {{ LOGIN }}
+    PASSWORD: {{ PASS }}
+    REQUEST_TIMEOUT: {{ TIMEOUT }}
+    SESSION_DURATION: {{ SESSION }}
+    STACK: {{ SERVER }}
+    TOKEN_EXPIRATION: {{ EXPIRATION }}
