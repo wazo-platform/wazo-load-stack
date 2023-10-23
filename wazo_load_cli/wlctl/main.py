@@ -4,8 +4,8 @@
 import click
 
 
-from commands import load
-from modules.utils import load_config
+from wlctl.commands import load
+from wlctl.modules.utils import load_config
 
 
 @click.group("cli")
