@@ -1,6 +1,6 @@
 .PHONY: build-api run-api stop-api clean api install 
 
-API_TAG = 1.0.4
+API_TAG = 1.1.0
 API_DOCKERFILE = wlapi/docker/Dockerfile
 API_IMAGE = wlapi
 API_CONTAINER = $(API_IMAGE)-2

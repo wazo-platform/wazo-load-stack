@@ -15,6 +15,11 @@ RUN pip install --upgrade pip
 WORKDIR /usr/src/wlapi/wlapi
 RUN make install
 
+RUN mkdir /opt/voipctl
+WORKDIR /opt/voipctl
+COPY wlapi/voipctl /opt/voipctl
+RUN pip install .
+
 
 FROM wda-load-testing:0.0.23
 ENV DEBIAN_FRONTEND noninteractive
