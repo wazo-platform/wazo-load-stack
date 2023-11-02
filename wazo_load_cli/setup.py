@@ -18,7 +18,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'wlctl = wlctl:cli',
+            'wlctl = wlctl.main:cli',
         ],
     },
 )

@@ -36,21 +36,24 @@ class GlobalLoadSection:
 
 class BareSIPLoadSection(LoadSection):
     def __init__(self, config: configparser.ConfigParser, timer: Timer):
-        self.ttl = int(config.get("BARESIP", "TTL", fallback=30))
         self.command = config.get("BARESIP", "CMD")
+        self.scenario = config.get("BARESIP", "SCENARIO", fallback="registration_only")
         self.start_line = int(config.get("BARESIP", "START_LINE"))
         self.end_line = int(config.get("BARESIP", "END_LINE"))
         self.password = config.get("BARESIP", "PASSWORD", fallback=None)
-        self.stack = config.get("BARESIP", "STACK")
+        self.domain = config.get("BARESIP", "DOMAIN", fallback="example.com")
         self.call_duration = int(config.get("BARESIP", "CALL_DURATION"))
+        self.group_call = int(config.get("BARESIP", "GROUP_CALL", fallback=20000))
         self.load_sections = int(config.get("BARESIP", "LOAD_SECTIONS"))
+        self.ttl = int(config.get("BARESIP", "TTL", fallback=30))
         self.load_jobs = int(config.get("BARESIP", "LOAD_JOBS"))
+        self.stack = config.get("BARESIP", "STACK")
 
     def generate_load_section(self) -> List[Dict[str, Any]]:
         loads = []
+        line = self.start_line
         for _ in range(self.load_sections):
             jobs = []
-            line = self.start_line
             for _ in range(self.load_jobs):
                 if not self.password:
                     self.password = str(line)
@@ -59,8 +62,12 @@ class BareSIPLoadSection(LoadSection):
                     "cmd": self.command,
                     "env": {
                         "LOGIN": f"{line}@{self.stack}",
+                        "LINE": line,
                         "PASSWORD": self.password,
                         "STACK": self.stack,
+                        "CALL_DURATION": self.call_duration,
+                        "GROUP_CALL": self.group_call,
+                        "SCENARIO": self.scenario,
                     },
                 }
                 if line < self.end_line:
@@ -159,9 +166,10 @@ class WDALoadSection(LoadSection):
 class Configuration:
     def __init__(self, config_path: str, timer: Timer):
         self.config_path = os.path.abspath(config_path)
+        print(self.config_path)
         self.timer = timer
         self.config = configparser.ConfigParser()
-        self.config.read(config_path)
+        self.config.read(self.config_path)
         self.load_sections: List[Any] = []
 
         if "GLOBAL" in self.config:
@@ -172,6 +180,8 @@ class Configuration:
 
         if "BARESIP" in self.config:
             self.load_sections.append(BareSIPLoadSection(self.config, self.timer))
+        else:
+            print(self.config.sections())
 
     def get_load_sections(self):
         return self.load_sections
@@ -182,7 +192,6 @@ class Configuration:
 
 class LoadGenerator:
     def __init__(self, load_file: str, configuration: Configuration):
-        # self.timer = timer
         self.load_file = load_file
         self.configuration = configuration
 

@@ -34,6 +34,9 @@ def load():
 def create(input, output):
     """Create a load file"""
     input_file_path = os.path.expanduser(input)
+    if not os.path.isfile(input_file_path):
+        print(f"file {input_file_path} does not exist")
+        sys.exit(2)
     output_file_path = os.path.expanduser(output)
     timer = RandomizedTimer()
     configuration = Configuration(input_file_path, timer)
