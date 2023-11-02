@@ -192,7 +192,6 @@ class Configuration:
 
 class LoadGenerator:
     def __init__(self, load_file: str, configuration: Configuration):
-        # self.timer = timer
         self.load_file = load_file
         self.configuration = configuration
 
