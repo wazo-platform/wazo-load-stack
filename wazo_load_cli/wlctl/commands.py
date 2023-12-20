@@ -1,15 +1,14 @@
 # Copyright 2023 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import click
-import sys
 import os
+import sys
 
-from yaml.parser import ParserError
+import click
 from requests.exceptions import RequestException
-
-from wlctl.modules.load_generator import LoadGenerator, RandomizedTimer, Configuration
+from wlctl.modules.load_generator import Configuration, LoadGenerator, RandomizedTimer
 from wlctl.modules.utils import load_yaml_file, send_json
+from yaml.parser import ParserError
 
 
 @click.group()

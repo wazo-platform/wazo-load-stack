@@ -48,7 +48,3 @@ touch ~/.wlctl/config
 [DEFAULT]
 pilot = https://10.0.0.1:9990
 ```
-
-
-
-

@@ -1,9 +1,10 @@
-from fastapi.testclient import TestClient
 import requests_mock
+from fastapi.testclient import TestClient
+
+from wazo_load_pilot.plugins.pilot.commands import SendCmd
 
 # import pytest
 from ..http import router
-from wazo_load_pilot.plugins.pilot.commands import SendCmd
 
 client = TestClient(router)
 

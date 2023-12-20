@@ -1,4 +1,4 @@
-.PHONY: build-api run-api stop-api clean api install 
+.PHONY: build-api run-api stop-api clean api install
 
 API_TAG = 1.1.0
 API_DOCKERFILE = wlapi/docker/Dockerfile
@@ -8,7 +8,7 @@ build-api: $(API_DOCKERFILE)
 	sudo docker build -t $(API_IMAGE):$(API_TAG) -f $(API_DOCKERFILE) .
 
 API_PORT = 9900
-run-api: stop-api 
+run-api: stop-api
 	sudo docker run -ti --rm --name $(API_CONTAINER) \
 	-p $(API_PORT):$(API_PORT) \
 	--env PULSE_SERVER=unix:/tmp/pulseaudio.socket \

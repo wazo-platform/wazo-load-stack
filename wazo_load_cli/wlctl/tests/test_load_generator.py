@@ -3,6 +3,7 @@
 
 import configparser
 import os
+
 from ..modules.load_generator import Configuration, LoadGenerator, Timer
 
 
