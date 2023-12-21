@@ -2,7 +2,9 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+
 from fastapi import APIRouter, HTTPException
+
 from .services import run
 
 router = APIRouter()

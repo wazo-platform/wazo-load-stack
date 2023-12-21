@@ -4,9 +4,8 @@ from __future__ import annotations
 
 import logging
 
+from wlapi.http_server import ApiApplication, api
 from xivo import plugin_helpers
-
-from wlapi.http_server import api, ApiApplication
 
 logger = logging.getLogger(__name__)
 

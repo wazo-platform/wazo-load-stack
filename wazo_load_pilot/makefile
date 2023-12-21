@@ -1,4 +1,4 @@
-.PHONY: install clean 
+.PHONY: install clean
 
 REQS = requirements.txt
 install: $(REQS)
@@ -53,7 +53,7 @@ build-pilot: $(PILOT_DOCKERFILE)
 
 PILOT_PORT = 9990
 SSERVER_IP_ADDRESS := $(shell sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(SSERVER_CONTAINER))
-run-pilot: 
+run-pilot:
 	sudo docker run -p $(PILOT_PORT):$(PILOT_PORT) -e TRAFGEN_HOSTS=$(SSERVER_IP_ADDRESS) --rm --name $(PILOT_CONTAINER) -d $(PILOT_IMAGE):$(PILOT_TAG)
 stop-pilot:
 	-sudo docker stop $(PILOT_CONTAINER)

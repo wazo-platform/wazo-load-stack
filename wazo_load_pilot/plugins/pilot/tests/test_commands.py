@@ -4,8 +4,8 @@
 import pytest
 
 from ..commands import (
-    DockerComposeCmdFactory,
     DockerCmdFactory,
+    DockerComposeCmdFactory,
     SendCmd,
     ShellCmdFactory,
 )

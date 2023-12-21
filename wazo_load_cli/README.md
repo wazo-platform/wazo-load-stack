@@ -11,7 +11,7 @@ wlctl load create -i my-load-voip.ini -o my-load-voip.yml
 
 And the yaml load file could look like that:
 ```
-$ cat my-voip-load.yml 
+$ cat my-voip-load.yml
 loads:
 - load:
   - cmd: /usr/local/bin/baresip-wrapper

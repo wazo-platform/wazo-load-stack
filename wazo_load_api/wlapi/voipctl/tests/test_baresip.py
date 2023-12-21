@@ -1,12 +1,13 @@
 import unittest
+
 from modules.baresip import (
     AcceptSubCmd,
-    RegisterSubCmd,
+    Call,
     DialSubCmd,
+    RegisterSubCmd,
     Registration,
     Shell,
 )
-from modules.baresip import Call
 
 
 class MockCommand(Shell):
