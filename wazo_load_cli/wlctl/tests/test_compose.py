@@ -1,12 +1,12 @@
-import unittest
 import os
+import unittest
 
-from wlctl.modules.compose import DockerComposeGenerator  
+from wlctl.modules.compose import DockerComposeGenerator
+
 
 class TestDockerComposeGenerator(unittest.TestCase):
-
     def setUp(self):
-        self.generator = DockerComposeGenerator(compose_file="test-docker-compose.yml")  
+        self.generator = DockerComposeGenerator(compose_file="test-docker-compose.yml")
 
     def tearDown(self):
         if os.path.exists("test-docker-compose.yml"):
@@ -25,7 +25,7 @@ class TestDockerComposeGenerator(unittest.TestCase):
     def test_generate_compose_file(self):
         self.generator.generate_compose_file(2)
         self.assertTrue(os.path.exists("test-docker-compose.yml"))
-        with open("test-docker-compose.yml", 'r') as f:
+        with open("test-docker-compose.yml") as f:
             content = f.read()
             self.assertIn("wlapi0:", content)
             self.assertIn("wlapi1:", content)
@@ -36,4 +36,3 @@ class TestDockerComposeGenerator(unittest.TestCase):
             self.assertIn("/tmp/pulseaudio.socket", content)
             self.assertIn("/opt/pulseaudio.client.conf", content)
             self.assertIn("/debug.log", content)
-

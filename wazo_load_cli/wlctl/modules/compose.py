@@ -1,25 +1,35 @@
 import configparser
 
+
 class ConfigParserIni:
     def __init__(self, config_file):
         self.config = configparser.ConfigParser()
         self.config.read(config_file)
 
-    def get_config_as_dict(self):
+    def get_config_as_dict(self) -> dict[str, str]:
         if 'COMPOSE' in self.config:
             return dict(self.config['COMPOSE'])
         else:
             raise ValueError("COMPOSE section not found in the configuration file.")
 
+
 class DockerComposeGenerator:
-    def __init__(self, compose_file="docker-compose.yml", image="wlapi", tag="1.1.2", port=9900, start_exposed=9900, sip_port=5060, media_port=10000):
+    def __init__(
+        self,
+        compose_file: str = "docker-compose.yml",
+        image: str = "wlapi",
+        tag: str = "1.1.2",
+        start_exposed: int = 9900,
+        sip_port: int = 5060,
+        media_port: int = 10000,
+    ):
         self.compose_file = compose_file
         self.image = image
         self.tag = tag
         self.start_exposed = start_exposed
         self.sip_port = sip_port
         self.media_port = media_port
-        self.services = {"services": {}}
+        self.services: dict = {"services": {}}
 
     def _generate_service_config(self, x):
         exposed = self.start_exposed + x
@@ -34,17 +44,33 @@ class DockerComposeGenerator:
                 "environment": {
                     "API_PORT": exposed,
                     "SIP_PORTS": f"{sip_start}-{sip_end}",
-                    "MEDIA_PORTS": f"{media_start}-{media_end}"
+                    "MEDIA_PORTS": f"{media_start}-{media_end}",
                 },
                 "container_name": f"wlapi{x}",
                 "network_mode": "host",
                 "tty": True,
                 "volumes": [
-                    {"type": "bind", "source": "/etc/resolv.conf", "target": "/etc/resolv.conf"},
-                    {"type": "bind", "source": "/tmp/pulseaudio.socket", "target": "/tmp/pulseaudio.socket"},
-                    {"type": "bind", "source": "/opt/pulseaudio.client.conf", "target": "/etc/pulse/client.conf"},
-                    {"type": "bind", "source": f"/opt/wda/logs/{x}.log", "target": "/debug.log"}
-                ]
+                    {
+                        "type": "bind",
+                        "source": "/etc/resolv.conf",
+                        "target": "/etc/resolv.conf",
+                    },
+                    {
+                        "type": "bind",
+                        "source": "/tmp/pulseaudio.socket",
+                        "target": "/tmp/pulseaudio.socket",
+                    },
+                    {
+                        "type": "bind",
+                        "source": "/opt/pulseaudio.client.conf",
+                        "target": "/etc/pulse/client.conf",
+                    },
+                    {
+                        "type": "bind",
+                        "source": f"/opt/wda/logs/{x}.log",
+                        "target": "/debug.log",
+                    },
+                ],
             }
         }
 
