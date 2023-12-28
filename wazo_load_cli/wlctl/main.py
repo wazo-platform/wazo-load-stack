@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import click
-from wlctl.commands import load
+from wlctl.commands import cluster, load
 from wlctl.modules.utils import load_config
 
 
@@ -19,3 +19,4 @@ def cli(ctx, config):
 
 
 cli.add_command(load)
+cli.add_command(cluster)
