@@ -6,6 +6,7 @@ import sys
 
 import click
 from requests.exceptions import RequestException
+from wlctl.modules.compose import ConfigParserIni, DockerComposeGenerator
 from wlctl.modules.load_generator import Configuration, LoadGenerator, RandomizedTimer
 from wlctl.modules.utils import load_yaml_file, send_json
 from yaml.parser import ParserError
@@ -72,3 +73,42 @@ def push(ctx, file):
     except RequestException as e:
         print("An error occured while sending data")
         print("Error: ", str(e))
+
+
+@click.group()
+def cluster():
+    """Subcommand that manages cluster."""
+    pass
+
+
+@cluster.command()
+@click.option(
+    '--input',
+    '-i',
+    default="compose.ini",
+    help='Path to the configuration file used to creating docker compose file.',
+)
+@click.option(
+    '--output',
+    '-o',
+    default="docker-compose.yml",
+    help='Path for the output docker compose file.',
+)
+def compose(input, output):
+    """Create a compose file"""
+    parser = ConfigParserIni(input)
+    config = parser.get_config_as_dict()
+
+    try:
+        cmp = DockerComposeGenerator(
+            compose_file=output,
+            image=config["image"],
+            tag=config["tag"],
+            start_exposed=int(config["start_exposed"]),
+            sip_port=int(config["sip_port"]),
+            media_port=int(config["media_port"]),
+        )
+    except KeyError as e:
+        print(f"Malformed ini file: {e}")
+        sys.exit(1)
+    cmp.generate_compose_file()
