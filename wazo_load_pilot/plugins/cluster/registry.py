@@ -6,6 +6,7 @@ import requests
 from .services import docker_registry, docker_registry_port
 
 class DockerRegistry:
+    """This is a stateless class, allowing to get it instanciated once at start up."""
     def __init__(self, private_docker_registry=f"{docker_registry}:{docker_registry_port}"):
         self.private_docker_registry = private_docker_registry
         self.client = docker.from_env()
@@ -38,16 +39,18 @@ class DockerRegistry:
         )
         return response.json()
 
-    def get_image_label(self, image, tag):
-        manifest = self.get_manifest(image, tag)
-        errors = manifest.get('errors', [])
-        if not errors:
-            config_digest = manifest.get('config', {}).get('digest')
+    def get_image_labels(self, image, tag, force=False):
+        if self.is_image_present(f"{image}:{tag}"):
+            blob = self.client.images.get(image)
+            labels = blob.attrs['Config']['Labels']
+            return labels
+        elif force:
             blob = self.client.images.pull(f"{self.private_docker_registry}/{image}:{tag}")
             labels = blob.attrs['Config']['Labels']
             return labels
         else:
-            raise ValueError(f"Error: {errors}")
+            # by default if the image is not present on the system we don't download it.
+            return None
 
     def registry_push_image(self, image):
         """
@@ -90,7 +93,14 @@ class DockerRegistry:
 
         print(f"Successfully pulled {pulled_image} and tagged as {image}.")
 
+    def is_image_present(self,image_name):
+        local_images = self.client.images.list()
 
+        for img in local_images:
+            for tag in img.tags:
+                if tag == image_name:
+                    return True
+        return False
 
 if __name__ == "__main__":
     PRIVATE_DOCKER_REGISTRY = "registry.load.wazo.io:5000"

@@ -31,3 +31,43 @@ async def cluster(payload):
             status_code=500, detail={'status': 'internal_error', 'error': str(e)}
         )
     return manifest_id
+
+@router.post('/cluster/registry/manifest')
+async def cluster(payload):
+    try:
+        manifest = registry_client.get_manifest_id(payload['image'], payload['tag'])
+    except KeyError as e:
+        raise HTTPException(
+            status_code=500, detail={'status': 'internal_error', 'error': str(e)}
+        )
+    return manifest
+
+
+@router.post('/cluster/registry/image/labels')
+async def cluster(payload):
+    """
+        This operation can be expensive if the image is not present on the system.
+        By default we don't download it.
+    """
+    try:
+        labels = registry_client.get_manifest_id(payload['image'], payload['tag'])
+    except KeyError as e:
+        raise HTTPException(
+            status_code=500, detail={'status': 'internal_error', 'error': str(e)}
+        )
+    if not labels:
+        return {"error": "the image is not present on system. Use the --force flag in your command. Warning: It can be time consumming."}
+    return labels
+
+@router.post('/cluster/registry/image/labels/force')
+async def cluster(payload):
+    """
+        This operation can be expensive if the image is not present on the system.
+    """
+    try:
+        labels = registry_client.get_manifest_id(payload['image'], payload['tag'], force=True)
+    except KeyError as e:
+        raise HTTPException(
+            status_code=500, detail={'status': 'internal_error', 'error': str(e)}
+        )
+    return labels
