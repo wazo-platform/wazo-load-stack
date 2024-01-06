@@ -55,6 +55,9 @@ _DEFAULT_CONFIG = {
     'docker':{
         'registry': 'registry.load.wazo.io',
         'registry_port': '5000',
+        'ca_cert': '/etc/wazo-load-pilot/docker/ca/ca.crt',
+        'client_cert': '/etc/wazo-load-pilot/docker/client/pilot.load.wazo.io.crt',
+        'client_key': '/etc/wazo-load-pilot/docker/client/pilot.load.wazo.io.key',
     },
 }
 
