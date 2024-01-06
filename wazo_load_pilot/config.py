@@ -52,6 +52,10 @@ _DEFAULT_CONFIG = {
         'cert': '/etc/wazo-load-pilot/certificate.pem',
         'key': '/etc/wazo-load-pilot/private.key',
     },
+    'docker':{
+        'registry': 'registry.load.wazo.io',
+        'registry_port': '5000',
+    },
 }
 
 
