@@ -1,23 +1,38 @@
-import docker
+# Copyright 2024 The Wazo Authors  (see the AUTHORS file)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import json
 
-class DockerHandles:
+import docker
+from docker.models.containers import Container
 
+
+class DockerHandles:
     def __init__(self):
         self.client = docker.from_env()
 
-    def run_container_echo(self, image, tag):
+    def run_container_echo(self, image: str, tag: str) -> Container:
         """
         Run a temporary container with the specified image and tag, echoing "Image with labels".
 
         Args:
         - image (str): The image name.
         - tag (str): The image tag.
+
+        Returns:
+        - Container: The created container object.
         """
-        container = self.client.containers.run(f"{image}:{tag}", detach=True, name="temp_container", command="echo 'Image with labels'")
+        container = self.client.containers.run(
+            f"{image}:{tag}",
+            detach=True,
+            name="temp_container",
+            command="echo 'Image with labels'",
+        )
         return container
 
-    def commit_container_with_labels(self, container, image, tag, labels):
+    def commit_container_with_labels(
+        self, container: Container, image: str, tag: str, labels: dict
+    ) -> None:
         """
         Commit a container with the given labels.
 
@@ -31,7 +46,7 @@ class DockerHandles:
         result = ' '.join([f"{key}={value}" for key, value in labels.items()])
         container.commit(repository=f"{image}:{tag}", changes=f"LABEL {result}")
 
-    def inspect_image_labels(self, image, tag):
+    def inspect_image_labels(self, image: str, tag: str) -> dict:
         """
         Inspect an image and retrieve its labels.
 
@@ -45,22 +60,3 @@ class DockerHandles:
         image_obj = self.client.images.get(f"{image}:{tag}")
         inspect_data = image_obj.attrs['Config']['Labels']
         return inspect_data
-
-if __name__ == "__main__":
-    registry = DockerHandles()
-
-	# Usage examples :
-    
-	# 1. Run a temporary container
-    container = registry.run_container_echo("wlpd", "1.0.3")
-
-    # 2. Commit the container with labels
-    labels = {"maintainer": "amazing-coders@wazo.io"}
-    registry.commit_container_with_labels(container, "wlpd", "1.0.3", labels)
-
-    # 3. Remove the temporary container
-    container.remove()
-
-    # 4. Inspect the image and retrieve labels
-    image_labels = registry.inspect_image_labels("wlpd", "1.0.3")
-    print(json.dumps(image_labels, indent=4))
