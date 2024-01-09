@@ -13,7 +13,7 @@ bump_version() {
     local version=$3
 
     IFS='.' read -ra VERSION_PARTS <<< "$version"
-    
+
     major=${VERSION_PARTS[0]}
     minor=${VERSION_PARTS[1]}
     patch=${VERSION_PARTS[2]}

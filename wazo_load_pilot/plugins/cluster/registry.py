@@ -5,15 +5,13 @@ from typing import Any, Optional, Union
 import docker
 import requests
 
-from .services import docker_registry, docker_registry_port
+#from .services import docker_registry, docker_registry_port
 
 
 class DockerRegistry:
     """This is a stateless class, allowing to get it instanciated once at start up."""
 
-    def __init__(
-        self, private_docker_registry: str = f"{docker_registry}:{docker_registry_port}"
-    ):
+    def __init__(self, private_docker_registry: str ):
         self.private_docker_registry: str = private_docker_registry
         self.client: docker.DockerClient = docker.from_env()
 
