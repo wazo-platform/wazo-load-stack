@@ -1,5 +1,6 @@
 # Copyright 2023 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException
@@ -84,7 +85,7 @@ async def image_label(payload: dict[str, Any]) -> dict[str, Any]:
 @router.post('/cluster/registry/image/labels/force')
 async def force_image_labels(payload: dict[str, Any]) -> Optional[dict[Any, Any]]:
     """
-    This operation can be expensive if the image is not present on the system.
+    This operation  can be expensive if the image is not present on the system.
     """
     try:
         if registry_client is None:
