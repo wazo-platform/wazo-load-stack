@@ -19,6 +19,7 @@ setup(
             f'{NAME}=main:main',
         ],
         'wlpd_plugins': [
+            'cluster = plugins.cluster.plugin:Plugin',
             'pilot = plugins.pilot.plugin:Plugin',
             'status = plugins.status.plugin:Plugin',
         ],

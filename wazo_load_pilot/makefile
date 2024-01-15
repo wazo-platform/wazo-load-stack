@@ -125,4 +125,3 @@ commit: $(LAST_BUILD_FILE) $(VERSION_FILE)
 		git commit -m "wazo load pilot wlpd docker image update"; \
 		git push --set-upstream origin $$BRANCH; \
 	fi
-
