@@ -1,0 +1,3 @@
+[submodule "wazo_load_api/wlapi/wda"]
+	path = wazo_load_api/wlapi/wda
+	url = git@github.com:TinxHQ/wda-load-test.git

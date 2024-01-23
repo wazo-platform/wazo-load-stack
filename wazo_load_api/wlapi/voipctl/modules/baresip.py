@@ -279,7 +279,7 @@ class AutoCall(Scenario):
         self.line: int = line
         self.auth_pass: str = auth_pass
         self.stack: str = stack
-        self.callee: str = f"*{callee}@{self.stack}"
+        self.callee: str = f"*{callee}"
         self.answermode: str = "auto"
         self.timeout: int = timeout
         self.shell: Shell = Command()
