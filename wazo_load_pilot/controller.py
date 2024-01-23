@@ -4,9 +4,8 @@ from __future__ import annotations
 
 import logging
 
+from http_server import PilotApplication, api
 from xivo import plugin_helpers
-
-from http_server import api, PilotApplication
 
 logger = logging.getLogger(__name__)
 

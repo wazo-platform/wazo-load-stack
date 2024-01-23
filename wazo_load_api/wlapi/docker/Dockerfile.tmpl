@@ -51,11 +51,11 @@ RUN wget https://github.com/Kitware/CMake/releases/download/v3.27.1/cmake-3.27.1
     cd cmake-3.27.1 && ./bootstrap && \
     make && make install
 
-RUN git clone -b v3.4.0 --depth=1 https://github.com/baresip/re.git 
+RUN git clone -b v3.4.0 --depth=1 https://github.com/baresip/re.git
 RUN cd re && \
     cmake -B build -DCMAKE_BUILD_TYPE=Release && \
     cmake --build build -j && \
-    cmake --install build && \ 
+    cmake --install build && \
     ldconfig
 
 WORKDIR /root/

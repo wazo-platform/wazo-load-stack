@@ -82,7 +82,7 @@ push: $(LAST_BUILD_FILE)
 	fi
 
 API_PORT = 9900
-run-api: stop-api 
+run-api: stop-api
 	sudo docker run -ti --rm --name $(API_CONTAINER) \
 	-p $(API_PORT):$(API_PORT) \
 	--env PULSE_SERVER=unix:/tmp/pulseaudio.socket \

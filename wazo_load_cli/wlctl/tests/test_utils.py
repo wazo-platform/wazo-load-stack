@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import yaml
-from ..modules.utils import send_json, load_yaml_file
+
+from ..modules.utils import load_yaml_file, send_json
 
 
 def test_load_yaml_file(tmpdir):

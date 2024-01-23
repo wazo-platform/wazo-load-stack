@@ -3,10 +3,10 @@ import copy
 import os
 import random
 import sys
-import yaml
-
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import Any
+
+import yaml
 
 
 class Timer(ABC):
@@ -22,7 +22,7 @@ class RandomizedTimer(Timer):
 
 class LoadSection(ABC):
     @abstractmethod
-    def generate_load_section(self) -> List[Dict[str, Any]]:
+    def generate_load_section(self) -> list[dict[str, Any]]:
         pass
 
 
@@ -30,7 +30,7 @@ class GlobalLoadSection:
     def __init__(self, config: configparser.ConfigParser):
         self.ttl = int(config.get("GLOBAL", "TTL", fallback=5))
 
-    def generate_load_section(self) -> Dict[str, Any]:
+    def generate_load_section(self) -> dict[str, Any]:
         return {"ttl": self.ttl}
 
 
@@ -49,7 +49,7 @@ class BareSIPLoadSection(LoadSection):
         self.load_jobs = int(config.get("BARESIP", "LOAD_JOBS"))
         self.stack = config.get("BARESIP", "STACK")
 
-    def generate_load_section(self) -> List[Dict[str, Any]]:
+    def generate_load_section(self) -> list[dict[str, Any]]:
         loads = []
         line = self.start_line
         for _ in range(self.load_sections):
@@ -170,7 +170,7 @@ class Configuration:
         self.timer = timer
         self.config = configparser.ConfigParser()
         self.config.read(self.config_path)
-        self.load_sections: List[Any] = []
+        self.load_sections: list[Any] = []
 
         if "GLOBAL" in self.config:
             self.global_section = GlobalLoadSection(self.config)
@@ -192,7 +192,6 @@ class Configuration:
 
 class LoadGenerator:
     def __init__(self, load_file: str, configuration: Configuration):
-        # self.timer = timer
         self.load_file = load_file
         self.configuration = configuration
 

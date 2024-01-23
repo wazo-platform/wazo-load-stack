@@ -1,7 +1,7 @@
 # Copyright 2023 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 from .http import router
-from .services import set_gateways, set_cluster
+from .services import set_cluster, set_gateways
 
 
 class Plugin:

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import sys
 
-from xivo.xivo_logging import get_log_level_by_name, setup_logging
-
-from controller import Controller
 from config import load_config
+from controller import Controller
+from xivo.xivo_logging import get_log_level_by_name, setup_logging
 
 
 def main():

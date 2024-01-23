@@ -3,14 +3,12 @@
 
 from fastapi import FastAPI
 from gunicorn.app.base import BaseApplication
-from typing import Dict
-
 
 api = FastAPI(title='wazo-load-pilot', openapi_url='/api/api.yml')
 
 
 class PilotApplication(BaseApplication):
-    def __init__(self, *args, config: Dict = {}, **kwargs):
+    def __init__(self, *args, config: dict = {}, **kwargs):
         self.config = config or {}
         # self.options = {}
         super().__init__(*args, **kwargs)

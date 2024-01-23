@@ -1,0 +1,117 @@
+#!/usr/bin/bash
+
+export PRIVATE_DOCKER_REGISTRY=registry.load.wazo.io:5000
+
+registry-list-image-tags() {
+	local image=$1
+	if [ -z "$image" ]; then
+		echo "Error: missing the repository to list" >&2
+		echo "Example: registry-list-repo-tags wlpd" >&2
+	else
+		curl -s -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+			http://$PRIVATE_DOCKER_REGISTRY/v2/$image/tags/list
+	fi
+}
+alias registry_list_image_tags=registry-list-image-tags
+registry-get-manifest-id(){
+	local image=$1
+	local tag=$2
+	if [ -z "$tag" ] || [ -z $image ];then
+		echo "Error while invoking registry-get-manifest-id" >&2
+		echo "Usage: registry-get-manifest-id <IMAGE> <TAG>" >&2
+		echo "Usage: registry-get-manifest-id wlpd 1.0.3" >&2
+	else
+	curl -s -I -H "Accept: application/vnd.docker.distribution.manifest.v2+json" i\
+		http://$PRIVATE_DOCKER_REGISTRY/v2/$image/manifests/$tag | \
+		grep Docker-Content-Digest| awk '{print $2}'
+	fi
+}
+
+registry-get-manifest(){
+	local image=$1
+	local tag=$2
+	if [ -z "$tag" ] || [ -z $image ];then
+		echo "Error while invoking registry-get-manifest" >&2
+		echo "Usage: registry-get-manifest <IMAGE> <TAG>" >&2
+		echo "Usage: registry-get-manifest wlpd 1.0.3" >&2
+	else
+		curl -s -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+			http://$PRIVATE_DOCKER_REGISTRY/v2/$image/manifests/$tag
+	fi
+}
+
+registry-get-image-label(){
+	local image=$1
+	local tag=$2
+	if [ -z "$tag" ] || [ -z $image ];then
+		echo "Error while invoking registry-get-image-labels" >&2
+		echo "Usage: registry-get-image-labels <IMAGE> <TAG>" >&2
+		echo "Usage: registry-get-image-labels wlpd 1.0.3" >&2
+	else
+		MANIFEST=$(registry-get-manifest $image $tag)
+		ERRORS=$(echo $MANIFEST|jq .errors)
+		if [ "$(echo "$ERRORS" | jq 'length')" -eq 0 ]; then
+			CONFIG_DIGEST=$(echo $MANIFEST |jq -r '.config.digest')
+			curl -s http://$PRIVATE_DOCKER_REGISTRY/v2/$image/blobs/$CONFIG_DIGEST |\
+				jq .config.Labels
+		else
+			echo $MANIFEST | jq .errors >&2
+		fi
+
+	fi
+}
+
+registry-update-image-labels(){
+	local image=$1
+	local tag=$2
+	local labels=$3
+	if [ -z "$tag" ] || [ -z "$image" ] || [ -z "$labels" ];then
+		echo "Error while invoking registry-update-image-labels" >&2
+		echo "Usage: registry-update-image-labels <IMAGE> <TAG> <JSON_LABELS>" >&2
+		echo "Usage: registry-update-image-labels wlpd 1.0.3 'maintainer=devloppers@wazo.io image_status=donotuse'" >&2
+	else
+		registry-pull-image $image:$tag
+		docker run --name temp_container  $image:$tag echo "Image with labels"
+		docker commit --change "LABEL $labels" temp_container $image:$tag
+		docker rm temp_container
+		docker inspect --format='{{json .Config.Labels}}' $image:$tag | jq .
+		registry-push-image $image:$tag
+		
+	fi
+
+}
+
+registry-pull-image(){
+	local image=$1
+	if [ -z "$image" ];then
+		echo "Error while invoking registry-pull-image" >&2
+		echo "Usage: registry-pull-image <IMAGE>:<TAG>" >&2
+		echo "Usage: registry-pull-image wlpd:1.0.3" >&2
+	else
+		docker pull $PRIVATE_DOCKER_REGISTRY/$image
+		docker tag  $PRIVATE_DOCKER_REGISTRY/$image $image
+	fi
+}
+
+registry-push-image(){
+	local image=$1
+	if [ -z "$image" ];then
+		echo "Error while invoking registry-push-image" >&2
+		echo "Usage: registry-push-image <IMAGE>:<TAG>" >&2
+		echo "Usage: registry-push-image wlpd:1.0.3" >&2
+	else
+		docker tag  $image $PRIVATE_DOCKER_REGISTRY/$image
+		docker push $PRIVATE_DOCKER_REGISTRY/$image
+	fi
+}
+
+alias registry-list-images="curl -s -X GET http://$PRIVATE_DOCKER_REGISTRY/v2/_catalog| jq ."
+
+registry-detail-running-images(){
+	local images=$(docker ps --format '{{json .}}' | jq -s -r .[].Image)
+	for string in $images;do
+		image="${string%:*}";
+		tag="${string##*:}"
+		registry-get-image-label $image $tag
+	done
+}

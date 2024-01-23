@@ -3,10 +3,10 @@
 
 import configparser
 import os
+from typing import Any
+
 import requests
 import yaml
-
-from typing import Dict, Any
 
 
 def load_config(config_file: str) -> Any:
@@ -23,12 +23,12 @@ def load_config(config_file: str) -> Any:
 def load_yaml_file(file_path: str) -> Any:
     """load_yaml_file loads a valid yaml and returns a dict."""
     config_file_path = os.path.expanduser(file_path)
-    with open(config_file_path, 'r') as file:
+    with open(config_file_path) as file:
         data = yaml.safe_load(file)
     return data
 
 
-def send_json(data: Dict, url: str) -> None:
+def send_json(data: dict, url: str) -> None:
     """send_json takes a dictionary and send it to the url as json data."""
 
     response = requests.post(url, json=data, verify=False)
