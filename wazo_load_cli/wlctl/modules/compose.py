@@ -1,6 +1,5 @@
 import configparser
 
-
 class ConfigParserIni:
     def __init__(self, config_file):
         self.config = configparser.ConfigParser()
@@ -11,7 +10,6 @@ class ConfigParserIni:
             return dict(self.config['COMPOSE'])
         else:
             raise ValueError("COMPOSE section not found in the configuration file.")
-
 
 class DockerComposeGenerator:
     def __init__(
@@ -37,10 +35,12 @@ class DockerComposeGenerator:
         sip_end = sip_start + 10
         media_start = self.media_port
         media_end = media_start + 40
+        image = f"{self.image}:{self.tag}"
+        image = ''.join(c for c in image if c not in '"')
 
         return {
             f"wlapi{x}": {
-                "image": f"{self.image}:{self.tag}",
+                "image": image,
                 "environment": {
                     "API_PORT": exposed,
                     "SIP_PORTS": f"{sip_start}-{sip_end}",
