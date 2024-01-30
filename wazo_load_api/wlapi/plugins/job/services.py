@@ -5,6 +5,7 @@ import subprocess
 
 
 async def run(cmd, environ):
+    print(f"RECEIVED ENVIRON TYPE OF === {type(environ)}")
     try:
         return (
             subprocess.check_output(
@@ -14,6 +15,7 @@ async def run(cmd, environ):
             .strip()
         )
     except subprocess.CalledProcessError as e:
+        print(f"there was an error running {cmd} ::: {str(e)}")
         raise ValueError(
             f"Error running {cmd}. stdout: '{e.stdout}'. stderr: '{e.stderr}'"
         )
