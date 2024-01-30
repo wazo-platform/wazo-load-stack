@@ -76,7 +76,7 @@ registry-update-image-labels(){
 		docker rm temp_container
 		docker inspect --format='{{json .Config.Labels}}' $image:$tag | jq .
 		registry-push-image $image:$tag
-		
+
 	fi
 
 }

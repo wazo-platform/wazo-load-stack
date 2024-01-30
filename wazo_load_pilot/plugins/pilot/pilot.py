@@ -6,13 +6,14 @@ import asyncio
 from .commands import ShellCmdFactory
 from .services import cluster
 
-semaphore = asyncio.Semaphore(1000) 
+semaphore = asyncio.Semaphore(1000)
+
 
 def get_command(node):
     if 'cmd' not in node:
         raise KeyError('Missing required key "cmd"')
     command = node['cmd']
-    print(f"COMMAND TO SEND --------------- {command}") 
+    print(f"COMMAND TO SEND --------------- {command}")
 
     env = node.get('env')
     shell_factory: ShellCmdFactory = ShellCmdFactory(
@@ -28,18 +29,16 @@ async def process_node(node, ttl):
     """
     print(f"LOAD READY TO PROCESS +++++++++ {node}")
 
-
     try:
         cmd = get_command(node)
         print(f"URLS FROM process_node ======= {cmd.urls}")
-        #print(cmd.send())
+        # print(cmd.send())
         responses = await cmd.send()
         print(f"SEND RETURNED ----------------- {responses}")
-        
+
         # Await on the TTL
         await asyncio.sleep(ttl)
-        
-        
+
     except Exception as e:
         print(f"An error occurred in process_node: {str(e)}")
 

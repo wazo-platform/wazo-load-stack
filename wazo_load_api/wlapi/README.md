@@ -8,7 +8,7 @@ make build
 ```
 
 By default this will build a new development version of wlapi. It manages
-the semver patch by default, so if the previous version was for instance 
+the semver patch by default, so if the previous version was for instance
 1.1.3 the version that will be built will be 1.1.4.
 If you made minor changes to the image you'll need to explicitly ink it:
 

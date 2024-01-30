@@ -15,4 +15,3 @@
 # Access rules
 #"Catch All" <sip:*@*>;access=block
 "Good Friend" <sip:good@friend.com>;access=allow
-

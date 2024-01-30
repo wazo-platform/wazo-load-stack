@@ -18,6 +18,7 @@ async def start_orchestrator(q):
 @router.post("/process-load")
 async def process_load(data: dict):
     from .pilot import parse_config
+
     print(f"RECEIVED THIS PAYLOAD ========= {data}")
 
     queue = await parse_config(data)

@@ -3,10 +3,7 @@
 
 from abc import ABC, abstractmethod
 
-import requests
 import httpx
-
-import asyncio
 
 
 class Command(ABC):
@@ -36,6 +33,7 @@ class SendCmd(Command):
                 responses.append({"response": response, "url": url})
 
         return responses
+
 
 class MockCmd(Command):
     """Command used as a mock command that prints infos."""

@@ -1,5 +1,6 @@
 import configparser
 
+
 class ConfigParserIni:
     def __init__(self, config_file):
         self.config = configparser.ConfigParser()
@@ -10,6 +11,7 @@ class ConfigParserIni:
             return dict(self.config['COMPOSE'])
         else:
             raise ValueError("COMPOSE section not found in the configuration file.")
+
 
 class DockerComposeGenerator:
     def __init__(

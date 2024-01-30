@@ -8,8 +8,8 @@ voip calls include signalling and media.
 ## RegistrationOnly
 A simple use case involving SIP signalling only.
 When wlapi get the load to run, it setup the proper environment
-variables containing the SCENARIO, the LOGIN, the PASSWORD and the STACK that 
-are required to perform a SIP registration. Then wlapi run 
+variables containing the SCENARIO, the LOGIN, the PASSWORD and the STACK that
+are required to perform a SIP registration. Then wlapi run
 voipctl that will trigger a registration.
 You can bypass wlapi and run directly voicptl:
 
