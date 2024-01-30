@@ -70,7 +70,21 @@ bump-version-validation:
 	$(MAKE) control-version ACTION=inc
 	$(MAKE) show-version
 
-build: bump-version build-pilot mark-image
+build: build-dockerfile bump-version build-pilot mark-image
+
+
+MAINTAINER ?= "dev@wazo.io"
+# IMAGE STATUS could be: dev|prod|test|donotuse|deprecated
+IMAGE_STATUS ?= dev
+PILOT_DOCKERFILE_TEMPLATE ?= docker/pilot.Dockerfile.tmpl
+PILOT_DOCKERFILE ?= docker/pilot.Dockerfile
+
+.PHONY: build-dockerfile
+
+build-dockerfile: $(PILOT_DOCKERFILE_TEMPLATE)
+	sed -e 's/__MAINTAINER__/$(MAINTAINER)/g' \
+	    -e 's/__STATUS__/$(IMAGE_STATUS)/g' \
+	    $(PILOT_DOCKERFILE_TEMPLATE) > $(PILOT_DOCKERFILE)
 
 PILOT_TAG ?= $(shell cat $(VERSION_FILE))
 PILOT_DOCKERFILE ?= docker/pilot.Dockerfile
