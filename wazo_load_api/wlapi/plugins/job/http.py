@@ -24,9 +24,10 @@ async def run_load(payload: dict):
     if environ:
         for key in environ:
             env[key] = str(environ[key])
-
+    print(f"ENVIRON IS TYPE OF ============= {type(environ)}")
     try:
-        await run(command, env)
+        print(f"COMMAND TO BE RUN ============ {command} with ENVIRONNMENT {environ}")
+        await run(command, environ)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail={'status': 'internal_error', 'error': str(e)}

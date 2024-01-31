@@ -19,6 +19,8 @@ async def start_orchestrator(q):
 async def process_load(data: dict):
     from .pilot import parse_config
 
+    print(f"RECEIVED THIS PAYLOAD ========= {data}")
+
     queue = await parse_config(data)
 
     # load ID for tracking progress will be implemented in the next story.

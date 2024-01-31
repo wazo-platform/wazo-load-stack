@@ -9,4 +9,8 @@ WORKDIR /opt
 RUN pip install --upgrade pip
 RUN make install
 WORKDIR /
+
+LABEL maintainer=__MAINTAINER__
+LABEL image_status=__STATUS__
+
 CMD [ "sh", "/start-wlpd.sh" ]

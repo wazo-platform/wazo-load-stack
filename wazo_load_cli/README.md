@@ -1,7 +1,7 @@
 # wlctl usage
 To install wlctl refer to INSTALL.md
 
-## Create a laod
+## Create a load
 you need to create a load ini file. For that you have examples here load-voip.ini and load-wda.ini
 
 Once you've created your load file
@@ -42,4 +42,10 @@ loads:
 Once you've created your load file, you just need to push it
 ```
 wltcl load push -f my-load-voip.yml
+```
+
+# Create a cluster file:
+## cluster subcommand
+```
+$ wlctl cluster compose -i wlctl/etc/compose.ini -o cluster-compose.yml
 ```

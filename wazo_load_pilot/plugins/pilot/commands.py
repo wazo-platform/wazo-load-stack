@@ -3,7 +3,7 @@
 
 from abc import ABC, abstractmethod
 
-import requests
+import httpx
 
 
 class Command(ABC):
@@ -22,12 +22,16 @@ class SendCmd(Command):
         self.command = command
         self.environment = environment
 
-    def send(self):
+    async def send(self):
         responses = []
         payload = {'cmd': self.command, 'env': self.environment}
-        for url in self.urls:
-            response = requests.post(url, json=payload, verify=False)
-            responses.append({"response": response, "url": url})
+        print(f"PAYLOAD TO BE SENT ========= {payload}")
+        async with httpx.AsyncClient(verify=False) as client:
+            for url in self.urls:
+                print(f"PAYLOAD TO BE SENT TO THIS URL ==========  {url}")
+                response = await client.post(url, json=payload)
+                responses.append({"response": response, "url": url})
+
         return responses
 
 
@@ -140,6 +144,7 @@ class ShellCmdFactory(CommandBuilderFactory):
     def new(self):
         urls = []
         url = f"{self.protocol}://{self.cluster['host']}:{self.cluster['port']}/run"
+        print(f"URL IS ============== {url} FROM ShellCmdFactory")
         urls.append(url)
 
         self.command = f'bash -c \'{self.cmd}\''
