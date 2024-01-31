@@ -27,7 +27,7 @@ async def run_load(payload: dict):
     print(f"ENVIRON IS TYPE OF ============= {type(environ)}")
     try:
         print(f"COMMAND TO BE RUN ============ {command} with ENVIRONNMENT {environ}")
-        await run(command, env)
+        await run(command, environ)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail={'status': 'internal_error', 'error': str(e)}
