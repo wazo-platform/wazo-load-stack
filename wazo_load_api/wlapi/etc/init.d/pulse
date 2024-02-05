@@ -1,0 +1,44 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          pulseaudio-setup
+# Required-Start:    $local_fs $network
+# Required-Stop:     $local_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: PulseAudio Setup
+# Description:       Starts and stops PulseAudio in system mode.
+### END INIT INFO
+
+
+DAEMON_PATH="/usr/bin"
+DAEMON=pulseaudio
+PIDFILE=/var/run/pulseaudio.pid
+PA_SOCKET=/tmp/pulseaudio.socket
+OPTIONS="--system --realtime --disallow-exit --disallow-module-loading=0 --disable-shm=0 --log-level=debug"
+
+case "$1" in
+  start)
+    echo "Starting PulseAudio..."
+    if [ -e $PA_SOCKET ]; then
+      rm -f $PA_SOCKET
+    fi
+    start-stop-daemon -b --start --pidfile $PIDFILE --exec $DAEMON_PATH/$DAEMON -- $OPTIONS
+    echo "PulseAudio started."
+    ;;
+  stop)
+    echo "Stopping PulseAudio..."
+    start-stop-daemon --stop --pidfile $PIDFILE --retry TERM/10/KILL/5
+    rm -f $PA_SOCKET
+    echo "PulseAudio stopped."
+    ;;
+  restart|reload|force-reload)
+    echo "Restarting PulseAudio..."
+    $0 stop
+    $0 start
+    ;;
+  *)
+    echo "Usage: /etc/init.d/pulseaudio-setup {start|stop|restart|reload|force-reload}"
+    exit 1
+esac
+
+exit 0
