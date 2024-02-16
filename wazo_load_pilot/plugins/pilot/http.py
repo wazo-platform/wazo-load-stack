@@ -66,13 +66,17 @@ async def list_loads():
     return {"loads_in_registry": registry}
 
 
-@router.post("/delete-load")
-async def delete_load(data):
-    await load_registry.delete_load(data['uuid'])
-    message = (
-        f"load with uuid: {data['uuid']} has been deleted"
-        "jobs in progress will be completed by the way."
-    )
+@router.delete("/delete-load/{load_uuid}")
+async def delete_load(load_uuid):
+    message = ""
+    result = await load_registry.delete_load(load_uuid)
+    if result:
+        message = (
+            f"load with uuid: {load_uuid} has been deleted"
+            "jobs in progress will be completed by the way."
+        )
+    else:
+        message = "No load with this uuid was found"
     return {"message": message}
 
 

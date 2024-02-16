@@ -50,6 +50,8 @@ class LoadRegistry:
                 await work_load_processor.cancel_jobs()
                 # delete the entry
                 del self.registry[str(uuid)]
+                return True
+            return False
 
     async def check_and_delete_invalid_entries(self):
         async with self.lock:
