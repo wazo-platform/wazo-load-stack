@@ -1,6 +1,7 @@
 # Copyright 2023 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
 import os
 import sys
 
@@ -8,8 +9,11 @@ import click
 from requests.exceptions import RequestException
 from wlctl.modules.compose import ConfigParserIni, DockerComposeGenerator
 from wlctl.modules.load_generator import Configuration, LoadGenerator, RandomizedTimer
-from wlctl.modules.utils import load_yaml_file, send_json
+from wlctl.modules.utils import load_yaml_file, send_json, send_query
 from yaml.parser import ParserError
+
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 @click.group()
@@ -74,6 +78,16 @@ def push(ctx, file):
         print("An error occured while sending data")
         print("Error: ", str(e))
 
+@load.command()
+@click.pass_context
+def list(ctx):
+    """List current loads currently processed on a stack."""
+    config = ctx.obj
+    pilot = config.get("DEFAULT", "pilot")
+    pilot = f"{pilot}/list-loads"
+    response = send_query(pilot)
+    response.raise_for_status()
+    print(json.dumps(response.json()))
 
 @click.group()
 def cluster():
