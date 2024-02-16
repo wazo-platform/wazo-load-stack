@@ -26,7 +26,7 @@ class LoadRegistry:
         self.registry: dict = dict()
         self.lock = asyncio.Lock()
 
-    async def add_load(self, uuid, payload, work_load_processor, start_time):
+    async def add_load(self, uuid, payload, work_load_processor, start_time, label):
         async with self.lock:
             self.registry[str(uuid)] = {
                 'payload': payload,
