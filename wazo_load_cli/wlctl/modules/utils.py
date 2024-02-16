@@ -46,3 +46,9 @@ def send_query(url: str) -> None:
 
     response = requests.get(url, verify=False)
     return response
+
+def send_delete(url: str) -> None:
+    """send a delete query to the url."""
+
+    response = requests.delete(url, verify=False)
+    return response
