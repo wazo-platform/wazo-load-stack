@@ -3,6 +3,7 @@
 
 import asyncio
 import subprocess
+import traceback
 
 
 async def run(cmd, environ):
@@ -22,9 +23,9 @@ async def run(cmd, environ):
         return_code = process.returncode
         print(f"          STDOUT ::::::::::::: {stdout_return}")
         print(f"          STDERR ::::::::::::: {stderr_return}")
-        print(f"     RETURN_CODE ::::::::::::: {stderr_return}")
-
+        print(f"     RETURN_CODE ::::::::::::: {return_code}")
     except Exception as e:
+        traceback.print_exc()
         print(f"there was an error running {cmd} ::: {str(e)}")
         raise ValueError(f"Error running {cmd}: {str(e)}")
 
