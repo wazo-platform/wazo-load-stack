@@ -6,13 +6,13 @@ import os
 import sys
 
 import click
+import urllib3
 from requests.exceptions import RequestException
 from wlctl.modules.compose import ConfigParserIni, DockerComposeGenerator
 from wlctl.modules.load_generator import Configuration, LoadGenerator, RandomizedTimer
 from wlctl.modules.utils import load_yaml_file, send_delete, send_json, send_query
 from yaml.parser import ParserError
 
-import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -78,6 +78,7 @@ def push(ctx, file):
         print("An error occured while sending data")
         print("Error: ", str(e))
 
+
 @load.command()
 @click.pass_context
 def list(ctx):
@@ -88,6 +89,7 @@ def list(ctx):
     response = send_query(pilot)
     response.raise_for_status()
     print(json.dumps(response.json()))
+
 
 @load.command()
 @click.option(
@@ -105,6 +107,7 @@ def delete(ctx, uuid):
     response = send_delete(pilot)
     response.raise_for_status()
     print(json.dumps(response.json()))
+
 
 @click.group()
 def cluster():

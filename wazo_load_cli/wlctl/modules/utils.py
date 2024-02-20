@@ -9,7 +9,6 @@ import requests
 import yaml
 
 
-
 def load_config(config_file: str) -> Any:
     """load_config is a function used to easily load a file
     whatever the path is absolute or relative.
@@ -41,13 +40,15 @@ def send_json(data: dict, url: str) -> None:
         print(f"Status code: {response.status_code}")
         print(f"Message: {response.text}")
 
-def send_query(url: str) -> None:
+
+def send_query(url: str) -> requests.Response:
     """send a query to the url."""
 
     response = requests.get(url, verify=False)
     return response
 
-def send_delete(url: str) -> None:
+
+def send_delete(url: str) -> requests.Response:
     """send a delete query to the url."""
 
     response = requests.delete(url, verify=False)

@@ -1,5 +1,6 @@
 import configparser
 import copy
+import csv
 import os
 import random
 import sys
@@ -7,6 +8,19 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 import yaml
+
+
+def import_csv(file_path):
+    with open(file_path, newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=';')
+        for row in reader:
+            if len(row) == 4:
+                login, sip_password, line, wda_password = row
+                yield (login, sip_password, line, wda_password)
+            else:
+                print(
+                    f"line {reader.line_num} doesn't contain required fileds: login password line."
+                )
 
 
 class Timer(ABC):
@@ -23,6 +37,10 @@ class RandomizedTimer(Timer):
 class LoadSection(ABC):
     @abstractmethod
     def generate_load_section(self) -> list[dict[str, Any]]:
+        pass
+
+    @abstractmethod
+    def generate_load_section_with_accounts(self) -> list[dict[str, Any]]:
         pass
 
 
@@ -51,6 +69,16 @@ class SchedulerLoadSection(LoadSection):
             }
         ]
 
+    def generate_load_section_with_accounts(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "batch": self.batch,
+                "duration": self.duration,
+                "rate": self.rate,
+                "label": self.label,
+            }
+        ]
+
 
 class BareSIPLoadSection(LoadSection):
     def __init__(self, config: configparser.ConfigParser, timer: Timer):
@@ -66,6 +94,7 @@ class BareSIPLoadSection(LoadSection):
         self.load_sections = int(config.get("BARESIP", "LOAD_SECTIONS", fallback=1))
         self.load_jobs = int(config.get("BARESIP", "LOAD_JOBS", fallback=1))
         self.stack = config.get("BARESIP", "STACK")
+        self.accounts = config.get("BARESIP", "ACCOUNTS", fallback=None)
 
     def generate_load_section(self) -> list[dict[str, Any]]:
         loads = []
@@ -97,6 +126,38 @@ class BareSIPLoadSection(LoadSection):
 
         return loads
 
+    def generate_load_section_with_accounts(self) -> list[dict[str, Any]]:
+        loads = []
+        end = False
+        logins_passwords = import_csv(self.accounts)
+        for _ in range(self.load_sections):
+            jobs = []
+            for _ in range(self.load_jobs):
+                try:
+                    login, password, line, _ = next(logins_passwords)
+                except StopIteration:
+                    end = True
+                    break
+
+                load_job = {
+                    "cmd": self.command,
+                    "env": {
+                        "LOGIN": f"{login}@{self.stack}",
+                        "LINE": line,
+                        "PASSWORD": password,
+                        "STACK": self.stack,
+                        "CALL_DURATION": self.call_duration,
+                        "GROUP_CALL": self.group_call,
+                        "SCENARIO": self.scenario,
+                    },
+                }
+                jobs.append(copy.deepcopy(load_job))
+            loads.append({"load": jobs, "ttl": self.ttl})
+            if end:
+                break
+
+        return loads
+
 
 class WDALoadSection(LoadSection):
     def __init__(self, config: configparser.ConfigParser, timer: Timer):
@@ -125,6 +186,7 @@ class WDALoadSection(LoadSection):
             self.docker = int(config.get("WDA", "DOCKER", fallback=1))
             self.load_sections = int(config.get("WDA", "LOAD_SECTIONS", fallback=1))
             self.load_jobs = int(config.get("WDA", "LOAD_JOBS", fallback=1))
+            self.accounts = config.get("WDA", "ACCOUNTS", fallback=None)
         except configparser.NoOptionError as e:
             print(f"error in your configuration file: {e}")
             sys.exit(1)
@@ -180,6 +242,47 @@ class WDALoadSection(LoadSection):
 
         return loads
 
+    def generate_load_section_with_accounts(self) -> list:
+        loads = []
+        for _ in range(self.load_sections):
+            jobs = []
+            end = False
+            logins_passwords = import_csv(self.accounts)
+            for _ in range(self.load_jobs):
+                try:
+                    login, password, _, wda_password = next(logins_passwords)
+                except StopIteration:
+                    end = True
+                    break
+
+                if self.job_delay > 0:
+                    delay = self.timer.get_timer(self.job_delay)
+                    command = f"sleep {delay} && {self.command}"
+                else:
+                    command = self.command
+
+                load_job = {
+                    "cmd": command,
+                    "env": {
+                        "SESSION_DURATION": self.duration,
+                        "TOKEN_EXPIRATION": self.token_expiration,
+                        "DISABLE_CHATD": self.disable_chatd,
+                        "LOGIN": f"{login}@{self.extension}",
+                        "PASSWORD": wda_password,
+                        "SERVER": self.stack,
+                        "DEBUG": self.debug,
+                        "DISABLE_HEADER_CHECK": self.disable_header_check,
+                        "REQUEST_TIMEOUT": self.request_timeout,
+                        "DOCKER": self.docker,
+                    },
+                }
+                jobs.append(copy.deepcopy(load_job))
+            loads.append({"load": jobs, "ttl": self.ttl})
+            if end:
+                break
+
+        return loads
+
 
 class Configuration:
     def __init__(self, config_path: str, timer: Timer):
@@ -230,7 +333,10 @@ class LoadGenerator:
             f.write(yaml.dump({"scheduler": scheduler_section}, indent=2, width=1000))
             loads = []
             for load_section in load_sections:
-                loads.append(load_section.generate_load_section())
+                if load_section.accounts:
+                    loads.append(load_section.generate_load_section_with_accounts())
+                else:
+                    loads.append(load_section.generate_load_section())
 
             flat_loads = [load for sublist in loads for load in sublist]
             f.write(yaml.dump({"loads": flat_loads}, indent=2, width=1000))
