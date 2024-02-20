@@ -54,9 +54,9 @@ class GlobalLoadSection:
 
 class SchedulerLoadSection(LoadSection):
     def __init__(self, config: configparser.ConfigParser, timer: Timer):
-        self.batch = config.get("SCHEDULER", "BATCH")
-        self.duration = config.get("SCHEDULER", "DURATION")
-        self.rate = config.get("SCHEDULER", "RATE")
+        self.batch = int(config.get("SCHEDULER", "BATCH"))
+        self.duration = int(config.get("SCHEDULER", "DURATION"))
+        self.rate = float(config.get("SCHEDULER", "RATE"))
         self.label = config.get("SCHEDULER", "DESCRIPTION")
 
     def generate_load_section(self) -> list[dict[str, Any]]:
