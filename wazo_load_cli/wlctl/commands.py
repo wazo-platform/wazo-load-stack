@@ -1,15 +1,19 @@
 # Copyright 2023 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
 import os
 import sys
 
 import click
+import urllib3
 from requests.exceptions import RequestException
 from wlctl.modules.compose import ConfigParserIni, DockerComposeGenerator
 from wlctl.modules.load_generator import Configuration, LoadGenerator, RandomizedTimer
-from wlctl.modules.utils import load_yaml_file, send_json
+from wlctl.modules.utils import load_yaml_file, send_delete, send_json, send_query
 from yaml.parser import ParserError
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 @click.group()
@@ -73,6 +77,36 @@ def push(ctx, file):
     except RequestException as e:
         print("An error occured while sending data")
         print("Error: ", str(e))
+
+
+@load.command()
+@click.pass_context
+def list(ctx):
+    """List current loads currently processed on a stack."""
+    config = ctx.obj
+    pilot = config.get("DEFAULT", "pilot")
+    pilot = f"{pilot}/list-loads"
+    response = send_query(pilot)
+    response.raise_for_status()
+    print(json.dumps(response.json()))
+
+
+@load.command()
+@click.option(
+    '--uuid',
+    '-u',
+    default=None,
+    help='uuid identifying the load to delete.',
+)
+@click.pass_context
+def delete(ctx, uuid):
+    """Delete the load identified by the uuid."""
+    config = ctx.obj
+    pilot = config.get("DEFAULT", "pilot")
+    pilot = f"{pilot}/delete-load/{uuid}"
+    response = send_delete(pilot)
+    response.raise_for_status()
+    print(json.dumps(response.json()))
 
 
 @click.group()

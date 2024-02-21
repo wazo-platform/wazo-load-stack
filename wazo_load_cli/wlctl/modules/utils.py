@@ -39,3 +39,17 @@ def send_json(data: dict, url: str) -> None:
         print("An error occured while sending data.")
         print(f"Status code: {response.status_code}")
         print(f"Message: {response.text}")
+
+
+def send_query(url: str) -> requests.Response:
+    """send a query to the url."""
+
+    response = requests.get(url, verify=False)
+    return response
+
+
+def send_delete(url: str) -> requests.Response:
+    """send a delete query to the url."""
+
+    response = requests.delete(url, verify=False)
+    return response

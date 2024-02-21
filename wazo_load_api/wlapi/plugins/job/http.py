@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import traceback
 
 from fastapi import APIRouter, HTTPException
 
@@ -15,6 +16,7 @@ async def run_load(payload: dict):
     try:
         command = payload['cmd']
     except KeyError as e:
+        traceback.print_exc()
         raise HTTPException(
             status_code=500, detail={'status': 'internal_error', 'error': str(e)}
         )
@@ -27,10 +29,12 @@ async def run_load(payload: dict):
     print(f"ENVIRON IS TYPE OF ============= {type(environ)}")
     try:
         print(f"COMMAND TO BE RUN ============ {command} with ENVIRONNMENT {environ}")
-        await run(command, environ)
+        result = await run(command, environ)
     except Exception as e:
+        traceback.print_exc()
         raise HTTPException(
-            status_code=500, detail={'status': 'internal_error', 'error': str(e)}
+            status_code=500,
+            detail={'status': 'internal_error', 'output': result, 'error': str(e)},
         )
 
     return {"status": "ok"}

@@ -33,6 +33,12 @@ def test_generate_load_files(tmpdir, capfd):
         "USER_END": "6000",
         "TTL": "5",
     }
+    config["SCHEDULER"] = {
+        "BATCH": "1",
+        "DURATION": "30",
+        "RATE": "0.0",
+        "DESCRIPTION": "TEST",
+    }
     config_file = tmpdir.join("genwda-load.conf")
     with open(config_file, "w") as f:
         config.write(f)
@@ -44,7 +50,12 @@ def test_generate_load_files(tmpdir, capfd):
     load = LoadGenerator("wda", configuration)
     load.generate_load_files()
 
-    expected_content = """loads:
+    expected_content = """scheduler:
+  batch: 1
+  duration: 30
+  label: TEST
+  rate: 0.0
+loads:
 - load:
   - cmd: sleep 28 && node /usr/src/app/index.js
     env:

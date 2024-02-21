@@ -26,7 +26,7 @@ class SendCmd(Command):
         responses = []
         payload = {'cmd': self.command, 'env': self.environment}
         print(f"PAYLOAD TO BE SENT ========= {payload}")
-        async with httpx.AsyncClient(verify=False) as client:
+        async with httpx.AsyncClient(timeout=60, verify=False) as client:
             for url in self.urls:
                 print(f"PAYLOAD TO BE SENT TO THIS URL ==========  {url}")
                 response = await client.post(url, json=payload)
