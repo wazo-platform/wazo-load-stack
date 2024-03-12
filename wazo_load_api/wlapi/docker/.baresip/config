@@ -109,7 +109,7 @@ module			pulse.so
 #module			jack.so
 #module			portaudio.so
 #module			aubridge.so
-#module			aufile.so
+module			aufile.so
 #module			ausine.so
 
 # Video codec Modules (in order)
@@ -151,7 +151,7 @@ module			ice.so
 
 # Media encryption modules
 #module			srtp.so
-#module			dtls_srtp.so
+module			dtls_srtp.so
 #module			gzrtp.so
 
 

@@ -4,6 +4,21 @@ from abc import ABC, abstractmethod
 from typing import cast
 
 
+def strace_debugger(func):
+    def wrapper(*args, **kwargs):
+        instance = args[0]
+        if instance.trace:
+            cmd = (
+                f"strace -o /opt/voipctl/debug/baresip.log --output-separately "
+                f"{func(*args, **kwargs)}"
+            )
+        else:
+            cmd = func(*args, **kwargs)
+        return cmd
+
+    return wrapper
+
+
 class Shell(ABC):
     @abstractmethod
     def run(self, cmd):
@@ -16,6 +31,7 @@ class Command(Shell):
 
     def run(self, cmd: str):
         environ = os.environ
+        print(cmd)
         try:
             return (
                 subprocess.check_output(
@@ -48,17 +64,25 @@ class RegisterSubCmd(BaresipSubCmd):
     """
 
     def __init__(
-        self, line: int, stack: str, auth_pass: str, answermode: str = "auto"
+        self,
+        line: int,
+        stack: str,
+        auth_pass: str,
+        answermode: str = "auto",
+        enable_strace: bool = False,
     ) -> None:
         self.line: int = line
         self.stack: str = stack
         self.auth_pass: str = auth_pass
         self.answer_mode: str = answermode
+        self.mediaenc: str = "dtls_srtp"
+        self.audio_source: str = "aufile,/opt/Rameses.wav"
 
     def get(self) -> str:
         return (
             f'-e "/uanew sip:{self.line}@{self.stack};'
-            f'auth_pass={self.auth_pass};answermode={self.answer_mode}"'
+            f'auth_pass={self.auth_pass};audio_source={self.audio_source};'
+            f'mediaenc={self.mediaenc};answermode={self.answer_mode}"'
         )
 
 
@@ -122,10 +146,12 @@ class Registration(BaresipCmd):
             answermode=self.answermode,
         )
         self.timeout: int = timeout
-        self.cmd: str = (
-            f"baresip -t {self.timeout} -f /root/.baresip {self.register.get()}"
-        )
+        self.cmd: str = self.get()
         self.shell: Shell = command
+
+    @strace_debugger
+    def get(self):
+        return f"/usr/local/bin/baresip -t {self.timeout} -f /root/.baresip {self.register.get()}"
 
     def run(self) -> None:
         print(self.cmd)
@@ -152,6 +178,7 @@ class Call(BaresipCmd):
         callee: str,
         command: Shell,
         timeout: int = 60,
+        trace: bool = False,
     ) -> None:
         self.line: int = line
         self.auth_pass: str = auth_pass
@@ -160,10 +187,16 @@ class Call(BaresipCmd):
         self.timeout: int = timeout
         self.register: str = RegisterSubCmd(self.line, self.stack, self.auth_pass).get()
         self.dial: str = DialSubCmd(self.callee).get()
-        self.cmd: str = (
-            f"baresip -t {self.timeout} -f /root/.baresip {self.register} {self.dial}"
-        )
+        self.trace = trace
+        self.cmd: str = self.get()
         self.shell: Shell = command
+
+    @strace_debugger
+    def get(self):
+        return (
+            f"/usr/local/bin/baresip -t {self.timeout} "
+            f"-f /root/.baresip {self.register} {self.dial}"
+        )
 
     def run(self) -> None:
         self.shell.run(self.cmd)
@@ -188,12 +221,14 @@ class Accept(BaresipCmd):
         command: Shell,
         answermode: str = "auto",
         timeout: int = 300,
+        trace: bool = False,
     ) -> None:
         self.line: int = line
         self.auth_pass: str = auth_pass
         self.stack: str = stack
         self.timeout: int = timeout
         self.answermode: str = answermode
+        self.trace = trace
 
         self.register: str = RegisterSubCmd(
             line=self.line,
@@ -204,10 +239,15 @@ class Accept(BaresipCmd):
 
         self.accept: str = AcceptSubCmd().get()
 
-        self.cmd: str = (
-            f"baresip -t {self.timeout} -f /root/.baresip {self.register} {self.accept}"
-        )
+        self.cmd: str = self.get()
         self.shell: Shell = command
+
+    @strace_debugger
+    def get(self):
+        return (
+            f"/usr/local/bin/baresip -t {self.timeout} "
+            "-f /root/.baresip {self.register} {self.accept}"
+        )
 
     def run(self) -> None:
         self.shell.run(self.cmd)
@@ -222,7 +262,7 @@ class Caller:
     """
 
     def __init__(self, line: int):
-        self.line: int = line
+        self.line: int = int(line)
 
     def is_caller(self) -> bool:
         if self.line % 2 == 0:
@@ -247,7 +287,12 @@ class RegistrationOnly(Scenario):
     """
 
     def __init__(
-        self, line: int, auth_pass: str, stack: str, timeout: int = 60
+        self,
+        line: int,
+        auth_pass: str,
+        stack: str,
+        timeout: int = 60,
+        trace: bool = False,
     ) -> None:
         print("=========== REGISTRATION ONLY =========")
         self.line: int = line
@@ -274,7 +319,13 @@ class AutoCall(Scenario):
     """AutoCall scenario is a simple call to *10."""
 
     def __init__(
-        self, line: int, auth_pass: str, stack: str, callee: int = 10, timeout: int = 60
+        self,
+        line: int,
+        auth_pass: str,
+        stack: str,
+        callee: int = 10,
+        timeout: int = 60,
+        trace: bool = False,
     ) -> None:
         self.line: int = line
         self.auth_pass: str = auth_pass
@@ -282,6 +333,7 @@ class AutoCall(Scenario):
         self.callee: str = f"*{callee}"
         self.answermode: str = "auto"
         self.timeout: int = timeout
+        self.trace = trace
         self.shell: Shell = Command()
         self.scenario: BaresipCmd = Call(
             line=self.line,
@@ -290,6 +342,7 @@ class AutoCall(Scenario):
             callee=self.callee,
             command=self.shell,
             timeout=self.timeout,
+            trace=self.trace,
         )
 
     def run_scenario(self) -> None:
@@ -300,14 +353,21 @@ class SimpleCall(Scenario):
     """SimpleCall implements a call to a specific callee."""
 
     def __init__(
-        self, line: int, auth_pass: str, callee: int, stack: str, timeout: int = 60
+        self,
+        line: int,
+        auth_pass: str,
+        callee: int,
+        stack: str,
+        timeout: int = 60,
+        trace: bool = False,
     ) -> None:
         self.line: int = line
         self.auth_pass: str = auth_pass
         self.stack: str = stack
         self.answermode: str = "auto"
-        self.callee: str = f'{callee}@{stack}'
+        self.callee: str = f'{callee}'
         self.timeout: int = timeout
+        self.trace = trace
         self.shell: Shell = Command()
 
         if Caller(self.line).is_caller():
@@ -320,6 +380,7 @@ class SimpleCall(Scenario):
                     callee=self.callee,
                     command=self.shell,
                     timeout=self.timeout,
+                    trace=self.trace,
                 ),
             )
         else:
@@ -332,6 +393,7 @@ class SimpleCall(Scenario):
                     command=self.shell,
                     answermode=self.answermode,
                     timeout=self.timeout,
+                    trace=self.trace,
                 ),
             )
 
@@ -349,6 +411,12 @@ class ProcessJob:
         self.use_case = os.getenv("SCENARIO")
         self.timeout = os.getenv("CALL_DURATION")
         self.callee = os.getenv("GROUP_CALL")
+        self.debug = os.getenv("DEBUG")
+        print(f"DEBUG IS {self.debug}")
+        self.trace = False
+        if self.debug == "True" or self.debug == "true":
+            self.trace = True
+        print(f"TRACE IS {self.trace}")
         print(self.use_case)
         self.scenario = self._new_scenario()
 
@@ -361,6 +429,7 @@ class ProcessJob:
                     auth_pass=cast(str, self.password),
                     stack=cast(str, self.stack),
                     timeout=cast(int, self.timeout),
+                    trace=self.trace,
                 ),
             )
         if self.use_case == "auto_call":
@@ -371,6 +440,7 @@ class ProcessJob:
                     auth_pass=cast(str, self.password),
                     stack=cast(str, self.stack),
                     timeout=cast(int, self.timeout),
+                    trace=self.trace,
                 ),
             )
         if self.use_case == "simple_call":
@@ -382,6 +452,7 @@ class ProcessJob:
                     stack=cast(str, self.stack),
                     timeout=cast(int, self.timeout),
                     callee=cast(int, self.callee),
+                    trace=self.trace,
                 ),
             )
         return scenario

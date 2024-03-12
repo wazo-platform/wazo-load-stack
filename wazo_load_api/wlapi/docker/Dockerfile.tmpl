@@ -21,9 +21,17 @@ COPY wlapi/voipctl /opt/voipctl
 RUN pip install .
 
 
-FROM wda-load-testing:0.0.23
+FROM node:16
 ENV DEBIAN_FRONTEND noninteractive
 
+# WDA INSTALL
+WORKDIR /usr/src/app
+COPY wlapi/wda/package*.json ./
+RUN npm install
+COPY wlapi/wda/* ./
+
+# INSTALL PYTHON 3.10
+WORKDIR /
 RUN  apt update && apt -y upgrade && \
     apt -y install build-essential zlib1g-dev libncurses5-dev \
 	libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev \
@@ -33,6 +41,7 @@ RUN  apt update && apt -y upgrade && \
     ./configure --prefix=/usr/local --enable-optimizations --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib" && \
     make -j $(nproc) && make altinstall
 
+# INSTALL PULSE
 RUN DEBIAN_FRONTEND=noninteractive apt update && apt -y upgrade && \
     apt-get install -y libre0 librem0 \
     vim \
@@ -45,6 +54,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt update && apt -y upgrade && \
     clang make pkg-config git libssl-dev wget ca-certificates libz-dev && \
     rm -rf /var/lib/apt/lists/*
 
+# INSTALL BARESIP
 WORKDIR /opt
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.27.1/cmake-3.27.1.tar.gz &&\
     tar -zxvf cmake-3.27.1.tar.gz && \
@@ -75,6 +85,7 @@ COPY --from=builder /usr/src/wlapi /usr/src/wlapi
 COPY --from=builder /etc /etc
 COPY wlapi/docker/.baresip /root/.baresip
 COPY wlapi/docker/docker-entrypoint.sh /docker-entrypoint.sh
+COPY wlapi/docker/Rameses.wav /opt/Rameses.wav
 
 RUN ldconfig
 
@@ -90,8 +101,11 @@ RUN useradd -r -s /bin/false systemd-resolve && \
 
 RUN mkdir -p /var/run/dbus
 RUN mkdir -p /etc/wazo-load-api/conf.d/
+RUN mkdir -p /opt/voipctl/debug
 
 LABEL maintainer=__MAINTAINER__
 LABEL image_status=__STATUS__
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y strace gdb
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
