@@ -1,10 +1,8 @@
-import asyncio
 import requests_mock
 from fastapi.testclient import TestClient
 
 from wazo_load_pilot.plugins.pilot.commands import SendCmd
 
-# import pytest
 from ..http import router
 
 client = TestClient(router)
