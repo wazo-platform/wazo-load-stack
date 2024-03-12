@@ -95,6 +95,7 @@ class BareSIPLoadSection(LoadSection):
         self.load_jobs = int(config.get("BARESIP", "LOAD_JOBS", fallback=1))
         self.stack = config.get("BARESIP", "STACK")
         self.accounts = config.get("BARESIP", "ACCOUNTS", fallback=None)
+        self.debug = config.get("BARESIP", "DEBUG", fallback=False)
 
     def generate_load_section(self) -> list[dict[str, Any]]:
         loads = []
@@ -115,6 +116,7 @@ class BareSIPLoadSection(LoadSection):
                         "CALL_DURATION": self.call_duration,
                         "GROUP_CALL": self.group_call,
                         "SCENARIO": self.scenario,
+                        "DEBUG": self.debug,
                     },
                 }
                 if line < self.end_line:
@@ -149,6 +151,7 @@ class BareSIPLoadSection(LoadSection):
                         "CALL_DURATION": self.call_duration,
                         "GROUP_CALL": self.group_call,
                         "SCENARIO": self.scenario,
+                        "DEBUG": self.debug,
                     },
                 }
                 jobs.append(copy.deepcopy(load_job))
