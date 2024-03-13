@@ -66,7 +66,7 @@ class WorkloadProcessor:
 
             if self.cancel_event.is_set():
                 break
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(0.02)
 
         try:
             await asyncio.gather(*coroutines)
