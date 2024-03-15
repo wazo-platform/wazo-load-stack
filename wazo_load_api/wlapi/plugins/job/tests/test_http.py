@@ -3,13 +3,12 @@ from fastapi.testclient import TestClient
 
 from wazo_load_pilot.plugins.pilot.commands import SendCmd
 
-# import pytest
 from ..http import router
 
 client = TestClient(router)
 
 
-def test_run_load_success():
+async def test_run_load_success():
     command = {"cmd": "start"}
 
     with requests_mock.Mocker() as m:
@@ -18,7 +17,7 @@ def test_run_load_success():
 
         send_cmd = SendCmd(urls=[url], command=command)
 
-        responses = send_cmd.send()
+        responses = await send_cmd.send()
 
     for response in responses:
         assert "response" in response

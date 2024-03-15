@@ -43,6 +43,9 @@ class DockerComposeGenerator:
         return {
             f"wlapi{x}": {
                 "image": image,
+                "ulimits": {
+                    "core": -1,
+                },
                 "environment": {
                     "API_PORT": exposed,
                     "SIP_PORTS": f"{sip_start}-{sip_end}",
@@ -59,13 +62,8 @@ class DockerComposeGenerator:
                     },
                     {
                         "type": "bind",
-                        "source": "/tmp/pulseaudio.socket",
-                        "target": "/tmp/pulseaudio.socket",
-                    },
-                    {
-                        "type": "bind",
-                        "source": "/opt/pulseaudio.client.conf",
-                        "target": "/etc/pulse/client.conf",
+                        "source": "/opt/voipctl/debug",
+                        "target": "/opt/voipctl/debug",
                     },
                     {
                         "type": "bind",
@@ -92,6 +90,10 @@ class DockerComposeGenerator:
                         f.write("    environment:\n")
                         for env_key, env_value in value.items():
                             f.write(f"      - {env_key}={env_value}\n")
+                    elif key == "ulimits":
+                        f.write("    ulimits:\n")
+                        for ulimits_key, ulimits_value in value.items():
+                            f.write(f"      {ulimits_key}: {ulimits_value}\n")
                     elif key == "volumes":
                         f.write("    volumes:\n")
                         for volume in value:
