@@ -69,7 +69,6 @@ class RegisterSubCmd(BaresipSubCmd):
         stack: str,
         auth_pass: str,
         answermode: str = "auto",
-        enable_strace: bool = False,
     ) -> None:
         self.line: int = line
         self.stack: str = stack
@@ -134,9 +133,11 @@ class Registration(BaresipCmd):
         command: Shell,
         answermode: str = "auto",
         timeout: int = 60,
+        trace: bool = False,
     ) -> None:
         self.line: int = line
         self.auth_pass: str = auth_pass
+        self.trace = trace
         self.stack: str = stack
         self.answermode = answermode
         self.register = RegisterSubCmd(
@@ -300,6 +301,7 @@ class RegistrationOnly(Scenario):
         self.stack: str = stack
         self.answermode: str = "auto"
         self.timeout: int = timeout
+        self.trace = trace
         self.shell: Shell = Command()
         self.scenario: BaresipCmd = Registration(
             line=self.line,
@@ -308,6 +310,7 @@ class RegistrationOnly(Scenario):
             command=self.shell,
             answermode=self.answermode,
             timeout=self.timeout,
+            trace=self.trace,
         )
 
     def run_scenario(self) -> None:
