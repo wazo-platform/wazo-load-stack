@@ -1,4 +1,4 @@
-# Copyright 2023 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2023-2024 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from abc import ABC, abstractmethod
@@ -77,12 +77,12 @@ class DockerComposeCmdFactory(CommandBuilderFactory):
         self.servers = kwargs["servers"]
         self.cmd_tag = kwargs["cmd_tag"]
         self.commands = {
-            "start-fleet": f"docker-compose -f {self.compose} up -d",
-            "stop-fleet": f"docker-compose -f {self.compose} down",
-            "restart-fleet": f"docker-compose -f {self.compose} restart",
-            "start-container": f"docker-compose -f {self.compose} up -d {self.container}",
-            "stop-container": f"docker-compose -f {self.compose} stop {self.container}",
-            "restart-container": f"docker-compose -f {self.compose} restart {self.container}",
+            "start-fleet": f"docker compose -f {self.compose} up -d",
+            "stop-fleet": f"docker compose -f {self.compose} down",
+            "restart-fleet": f"docker compose -f {self.compose} restart",
+            "start-container": f"docker compose -f {self.compose} up -d {self.container}",
+            "stop-container": f"docker compose -f {self.compose} stop {self.container}",
+            "restart-container": f"docker compose -f {self.compose} restart {self.container}",
         }
 
     def new(self):
