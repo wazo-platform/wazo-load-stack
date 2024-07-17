@@ -22,7 +22,7 @@ RUN pip install .
 
 
 FROM node:16
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # WDA INSTALL
 WORKDIR /usr/src/app
@@ -77,7 +77,7 @@ RUN git clone -b v3.4.0 --depth=1 https://github.com/baresip/baresip.git && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/libc.conf
 RUN ldconfig
 
-ENV PATH "/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:$PATH"
 
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /usr/local/bin/start-wlapi /usr/local/bin/start-wlapi
