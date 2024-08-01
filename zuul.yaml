@@ -1,3 +1,16 @@
 - project:
     templates:
       - wazo-tox-linters-310
+    wazo-check:
+      jobs:
+        - wazo-load-cli-unittests
+    wazo-gate:
+      jobs:
+        - wazo-load-cli-unittests
+
+- job:
+    name: wazo-load-cli-unittests
+    description: Runs unittests for wazo-load-cli
+    parent: wazo-tox-py39
+    vars:
+      tox_envlist: cli
