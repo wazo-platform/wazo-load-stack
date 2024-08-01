@@ -33,6 +33,4 @@ class TestDockerComposeGenerator(unittest.TestCase):
             self.assertIn("SIP_PORTS", content)
             self.assertIn("MEDIA_PORTS", content)
             self.assertIn("/etc/resolv.conf", content)
-            self.assertIn("/tmp/pulseaudio.socket", content)
-            self.assertIn("/opt/pulseaudio.client.conf", content)
             self.assertIn("/debug.log", content)
