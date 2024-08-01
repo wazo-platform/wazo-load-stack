@@ -1,6 +1,10 @@
-# Copyright 2023 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2023-2024 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import asyncio
+from unittest.mock import patch
+
+import httpx
 import pytest
 
 from ..commands import (
@@ -11,20 +15,29 @@ from ..commands import (
 )
 
 
-def test_cmd_send(requests_mock):
+@patch(
+    'wazo_load_pilot.plugins.pilot.commands.httpx.AsyncClient.post',
+    return_value=httpx.Response(200, json={"response": "success"}),
+)
+def test_cmd_send(async_post_mock):
+    loop = asyncio.get_event_loop()
     url = "https://example.com/load"
     command = {"cmd": "start"}
     environ = {"env": "'LOGIN': '1004@example.com'"}
 
-    requests_mock.post(f"{url}", json={"response": "success"})
     send_cmd = SendCmd(urls=[url], command=command, environment=environ)
 
-    responses = send_cmd.send()
+    responses = loop.run_until_complete(send_cmd.send())
 
-    for response in responses:
-        assert "response" in response
-        assert "url" in response
-        assert response["response"].status_code == 200
+    loop.close()
+
+    assert len(responses) == 1
+    response = responses[0]
+    assert response['response'].status_code == 200
+    assert response['url'] == url
+    assert response['response'].json() == {'response': 'success'}
+
+    async_post_mock.assert_called_once_with(url, json={'cmd': command, 'env': environ})
 
 
 class TestDockerComposeCmdFactory:
