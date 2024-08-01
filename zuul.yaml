@@ -5,10 +5,12 @@
       jobs:
         - wazo-load-cli-unittests
         - wazo-load-pilot-unittests
+        - wazo-load-api-unittests
     wazo-gate:
       jobs:
         - wazo-load-cli-unittests
         - wazo-load-pilot-unittests
+        - wazo-load-api-unittests
 
 - job:
     name: wazo-load-cli-unittests
@@ -23,3 +25,10 @@
     parent: wazo-tox-py39
     vars:
       tox_envlist: pilot
+
+- job:
+    name: wazo-load-api-unittests
+    description: Runs unittests for wazo-load-api
+    parent: wazo-tox-py39
+    vars:
+      tox_envlist: api
