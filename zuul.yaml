@@ -4,9 +4,11 @@
     wazo-check:
       jobs:
         - wazo-load-cli-unittests
+        - wazo-load-pilot-unittests
     wazo-gate:
       jobs:
         - wazo-load-cli-unittests
+        - wazo-load-pilot-unittests
 
 - job:
     name: wazo-load-cli-unittests
@@ -14,3 +16,10 @@
     parent: wazo-tox-py39
     vars:
       tox_envlist: cli
+
+- job:
+    name: wazo-load-pilot-unittests
+    description: Runs unittests for wazo-load-pilot
+    parent: wazo-tox-py39
+    vars:
+      tox_envlist: pilot
