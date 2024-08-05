@@ -1,3 +1,34 @@
 - project:
     templates:
       - wazo-tox-linters-310
+    wazo-check:
+      jobs:
+        - wazo-load-cli-unittests
+        - wazo-load-pilot-unittests
+        - wazo-load-api-unittests
+    wazo-gate:
+      jobs:
+        - wazo-load-cli-unittests
+        - wazo-load-pilot-unittests
+        - wazo-load-api-unittests
+
+- job:
+    name: wazo-load-cli-unittests
+    description: Runs unittests for wazo-load-cli
+    parent: wazo-tox-py39
+    vars:
+      tox_envlist: cli
+
+- job:
+    name: wazo-load-pilot-unittests
+    description: Runs unittests for wazo-load-pilot
+    parent: wazo-tox-py39
+    vars:
+      tox_envlist: pilot
+
+- job:
+    name: wazo-load-api-unittests
+    description: Runs unittests for wazo-load-api
+    parent: wazo-tox-py39
+    vars:
+      tox_envlist: api
