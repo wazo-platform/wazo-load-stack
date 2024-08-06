@@ -42,3 +42,5 @@ make push
 ## Deploying the image
 [WIP: docker swarm]
 So far it is addressed by a collection of scripts.
+
+DO NOT MERGE
