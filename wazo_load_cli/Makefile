@@ -19,4 +19,3 @@ TAG = 0.0.1
 DOCKERFILE = docker/Dockerfile
 build-cli: $(DOCKERFILE)
 	sudo docker build -t $(IMAGE):$(TAG) -f $(DOCKERFILE) .
-	DO NOT MERGE
