@@ -35,7 +35,7 @@ registry-get-manifest(){
 		echo "Usage: registry-get-manifest <IMAGE> <TAG>" >&2
 		echo "Usage: registry-get-manifest wlpd 1.0.3" >&2
 	else
-		curl -s -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+		curl -s --fail -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
 			http://$PRIVATE_DOCKER_REGISTRY/v2/$image/manifests/$tag
 	fi
 }
