@@ -24,6 +24,11 @@ pipeline {
                     exit 0
                 else
                     echo "building new docker image"
+                    git submodule update --init --recursive
+                    pushd wazo_load_api
+                    make build-dockerfile
+                    make build-api
+                    popd
                 fi
                 '''
             }
