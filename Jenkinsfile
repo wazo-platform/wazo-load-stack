@@ -29,6 +29,7 @@ pipeline {
                     make build-dockerfile
                     make build-api
                     popd
+                    registry-push-image wlapi:$VERSION
                 fi
                 '''
             }
