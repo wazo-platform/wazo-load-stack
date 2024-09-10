@@ -12,8 +12,8 @@ make build-api
 
 ### Push the built image:
 ```
-docker tag wazocommunicationinc/wlapi:<version> wazocommunicationinc/wlapi:<version>
-docker push wazocommunicationinc/wlapi:<version>
+docker tag wazoplatform/wlapi:<version> wazoplatform/wlapi:<version>
+docker push wazoplatform/wlapi:<version>
 ```
 
 ## Deploying the image

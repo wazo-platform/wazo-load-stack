@@ -11,7 +11,7 @@ pipeline {
         stage('Changes to wlapi') {
             environment {
                 VERSION = readFile('wazo_load_api/version').trim()
-                IMAGE = wazocommunicationinc/wlapi
+                IMAGE = 'wazoplatform/wlapi'
             }
             when { changeset "wazo_load_api/**" }
             steps {
