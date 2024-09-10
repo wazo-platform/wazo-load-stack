@@ -31,7 +31,7 @@ pipeline {
                     make build-api
                     popd
                     docker tag $IMAGE:$VERSION $IMAGE:$VERSION
-                    docker push $IMAGE
+                    docker push $IMAGE:$VERSION
                 fi
                 '''
             }
