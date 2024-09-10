@@ -59,7 +59,7 @@ rebuild: down-version build
 build: build-dockerfile bump-version build-api mark-image
 IMAGE_STATUS ?= dev
 API_TAG = $(VERSION)
-API_IMAGE = wlapi
+API_IMAGE = wazocommunicationinc/wlapi
 API_CONTAINER = $(API_IMAGE)-2
 build-api: $(API_DOCKERFILE)
 	docker build -t $(API_IMAGE):$(API_TAG) \

@@ -11,6 +11,7 @@ pipeline {
         stage('Changes to wlapi') {
             environment {
                 VERSION = readFile('wazo_load_api/version').trim()
+                IMAGE = wazocommunicationinc/wlapi
             }
             when { changeset "wazo_load_api/**" }
             steps {
@@ -18,7 +19,7 @@ pipeline {
                 echo "New version: ${VERSION}"
                 sh '''#!/bin/bash
                 . wazo_load_pilot/docker-funcs
-                registry-get-manifest wlapi $VERSION >> /dev/null
+                docker manifest inspect $IMAGE:$VERSION >> /dev/null
                 if [ $? -eq "0" ]; then
                     echo "Version already available"
                     exit 0
@@ -29,7 +30,8 @@ pipeline {
                     make build-dockerfile
                     make build-api
                     popd
-                    registry-push-image wlapi:$VERSION
+                    docker tag $IMAGE:$VERSION $IMAGE:$VERSION
+                    docker push $IMAGE
                 fi
                 '''
             }
