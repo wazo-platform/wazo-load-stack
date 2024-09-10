@@ -17,7 +17,7 @@ class DockerComposeGenerator:
     def __init__(
         self,
         compose_file: str = "docker-compose.yml",
-        image: str = "wlapi",
+        image: str = "wazocommunicationinc/wlapi",
         tag: str = "1.1.2",
         start_exposed: int = 9900,
         sip_port: int = 5060,
