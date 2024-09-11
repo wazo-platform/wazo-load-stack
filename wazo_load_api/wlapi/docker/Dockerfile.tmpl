@@ -85,7 +85,7 @@ COPY --from=builder /usr/src/wlapi /usr/src/wlapi
 COPY --from=builder /etc /etc
 COPY wlapi/docker/.baresip /root/.baresip
 COPY wlapi/docker/docker-entrypoint.sh /docker-entrypoint.sh
-ADD https://mirror.wazo.community/test-assets/wazo-load-stack/wazo-load-api/Ramenes.wav /opt/
+ADD https://mirror.wazo.community/test-assets/wazo-load-stack/wazo-load-api/Rameses.wav /opt/
 
 RUN ldconfig
 
