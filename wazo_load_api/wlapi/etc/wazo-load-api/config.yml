@@ -5,8 +5,6 @@
 # Directory in which to place config overrides
 extra_config_files: /etc/wazo-load-api/conf.d/
 
-update_policy_on_startup: True
-
 log_filename: /var/log/wazo-load-api.log
 debug: False
 
