@@ -6,11 +6,13 @@
         - wazo-load-cli-unittests
         - wazo-load-pilot-unittests
         - wazo-load-api-unittests
+        - wazo-load-pilot-integration-tests
     wazo-gate:
       jobs:
         - wazo-load-cli-unittests
         - wazo-load-pilot-unittests
         - wazo-load-api-unittests
+        - wazo-load-pilot-integration-tests
 
 - job:
     name: wazo-load-cli-unittests
@@ -32,3 +34,11 @@
     parent: wazo-tox-py39
     vars:
       tox_envlist: api
+
+- job:
+    name: wazo-load-pilot-integration-tests
+    description: Runs integration tests for wazo-load-pilot
+    parent: wazo-tox-integration-py39
+    vars:
+      tox_envlist: pilot_integration
+      docker_install_siblings: false
