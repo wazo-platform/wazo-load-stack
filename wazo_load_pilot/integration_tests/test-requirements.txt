@@ -1,0 +1,4 @@
+pytest
+requests
+
+https://github.com/wazo-platform/wazo-test-helpers/archive/master.zip

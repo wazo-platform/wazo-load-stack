@@ -1,0 +1,10 @@
+services:
+  sync:
+    image: wazoplatform/wait
+    environment:
+      TIMEOUT: "${INTEGRATION_TEST_TIMEOUT}"
+
+  wlpd:
+    image: wlpd
+    ports:
+      - "9990"
