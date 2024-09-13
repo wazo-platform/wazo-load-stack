@@ -10,11 +10,22 @@ from wazo_test_helpers.asset_launching_test_case import AssetLaunchingTestCase
 use_asset = pytest.mark.usefixtures
 
 
-class BaseAssetLaunchingTestCase(AssetLaunchingTestCase):
+class _WlpdAssetLaunchingTestCase(AssetLaunchingTestCase):
     assets_root = os.path.join(os.path.dirname(__file__), '../..', 'assets')
     service = 'wlpd'
+
+
+class BaseAssetLaunchingTestCase(_WlpdAssetLaunchingTestCase):
     asset = 'base'
+
+
+class VmsAssetLaunchingTestCase(_WlpdAssetLaunchingTestCase):
+    asset = 'vms'
 
 
 class BaseIntegrationTest(unittest.TestCase):
     asset_cls = BaseAssetLaunchingTestCase
+
+
+class VmsIntegrationTest(unittest.TestCase):
+    asset_cls = VmsAssetLaunchingTestCase
