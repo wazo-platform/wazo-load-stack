@@ -22,3 +22,12 @@ def base():
         yield
     finally:
         base_module.BaseAssetLaunchingTestCase.tearDownClass()
+
+
+@pytest.fixture(scope='session')
+def vms():
+    base_module.VmsAssetLaunchingTestCase.setUpClass()
+    try:
+        yield
+    finally:
+        base_module.VmsAssetLaunchingTestCase.tearDownClass()

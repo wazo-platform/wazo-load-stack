@@ -8,3 +8,16 @@ services:
     image: wlpd
     ports:
       - "9990"
+    volumes:
+      - "../..:/opt"
+    command: ["/usr/local/bin/wlpd", "--config-file", "/etc/wazo-load-pilot/config.yml"]
+
+  trafgen1:
+    image: wazoplatform/wazo-wlapi-vm-test:local
+    ports:
+      - "22"
+
+  trafgen2:
+    image: wazoplatform/wazo-wlapi-vm-test:local
+    ports:
+      - "22"
