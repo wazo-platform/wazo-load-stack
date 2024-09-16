@@ -4,7 +4,7 @@
 import asyncio
 
 import asyncssh
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from .dependencies import get_config
 
@@ -24,10 +24,10 @@ async def run_on_all_gateways(config: dict, command: str) -> dict:
     for i, result in enumerate(results, 1):
         if isinstance(result, Exception):
             print('Task %d failed: %s', i, str(result))
-            return {'message': 'failed', 'reason': str(result)}
+            raise HTTPException(status_code=500, detail=str(result))
         elif result.exit_status != 0:
             print('Task %d exited with status %s', i, result.exit_status)
-            return {'message': 'failed', 'reason': str(result)}
+            raise HTTPException(status_code=500, detail=str(result))
         else:
             print('Task %d succeeded', i)
 
