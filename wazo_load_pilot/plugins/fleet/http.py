@@ -16,14 +16,9 @@ async def run_command(host, command: str) -> asyncssh.SSHCompletedProcess:
         return await conn.run(command)
 
 
-@router.get('/fleet/start')
-async def start(config: dict = Depends(get_config)):
-    '''
-    Connects to all trafgen VM and start the container fleet
-    '''
+async def run_on_all_gateways(config: dict, command: str) -> dict:
     hostnames = config.get('gateways') or []
-    cmd = 'docker compose -f /etc/trafgen/docker-compose.yml up -d'
-    tasks = (run_command(host, cmd) for host in hostnames)
+    tasks = (run_command(host, command) for host in hostnames)
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
     for i, result in enumerate(results, 1):
@@ -37,6 +32,16 @@ async def start(config: dict = Depends(get_config)):
             print('Task %d succeeded', i)
 
     return {'message': 'success'}
+
+
+@router.get('/fleet/start')
+async def start(config: dict = Depends(get_config)):
+    '''
+    Connects to all trafgen VM and start the container fleet
+    '''
+    cmd = 'docker compose -f /etc/trafgen/docker-compose.yml up -d'
+    result = await run_on_all_gateways(config, cmd)
+    return result
 
 
 @router.get('/fleet/stop')
@@ -44,19 +49,6 @@ async def stop(config: dict = Depends(get_config)):
     '''
     Connects to all trafgen VM and stops the container fleet
     '''
-    hostnames = config.get('gateways') or []
     cmd = 'docker compose -f /etc/trafgen/docker-compose.yml down'
-    tasks = (run_command(host, cmd) for host in hostnames)
-    results = await asyncio.gather(*tasks, return_exceptions=True)
-
-    for i, result in enumerate(results, 1):
-        if isinstance(result, Exception):
-            print('Task %d failed: %s', i, str(result))
-            return {'message': 'failed', 'reason': str(result)}
-        elif result.exit_status != 0:
-            print('Task %d exited with status %s', i, result.exit_status)
-            return {'message': 'failed', 'reason': str(result)}
-        else:
-            print('Task %d succeeded', i)
-
-    return {'message': 'success'}
+    result = await run_on_all_gateways(config, cmd)
+    return result
