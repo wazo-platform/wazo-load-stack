@@ -37,3 +37,26 @@ async def start(config: dict = Depends(get_config)):
             print('Task %d succeeded', i)
 
     return {'message': 'success'}
+
+
+@router.get('/fleet/stop')
+async def stop(config: dict = Depends(get_config)):
+    '''
+    Connects to all trafgen VM and stops the container fleet
+    '''
+    hostnames = config.get('gateways') or []
+    cmd = 'docker compose -f /etc/trafgen/docker-compose.yml down'
+    tasks = (run_command(host, cmd) for host in hostnames)
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    for i, result in enumerate(results, 1):
+        if isinstance(result, Exception):
+            print('Task %d failed: %s', i, str(result))
+            return {'message': 'failed', 'reason': str(result)}
+        elif result.exit_status != 0:
+            print('Task %d exited with status %s', i, result.exit_status)
+            return {'message': 'failed', 'reason': str(result)}
+        else:
+            print('Task %d succeeded', i)
+
+    return {'message': 'success'}
