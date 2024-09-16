@@ -27,6 +27,7 @@ class TestFleetStart(base.VmsIntegrationTest):
         response = requests.get(url, verify=False)
 
         assert response.status_code == 200
+        assert response.json() == {'message': 'success'}
 
         for log_filename in self.list_docker_mock_log_filenames():
             with open(log_filename) as f:
@@ -43,6 +44,7 @@ class TestFleetStart(base.VmsIntegrationTest):
         response = requests.get(url, verify=False)
 
         assert response.status_code == 200
+        assert response.json() == {'message': 'success'}
 
         for log_filename in self.list_docker_mock_log_filenames():
             with open(log_filename) as f:
