@@ -14,7 +14,10 @@ TRAFGEN_COUNT = 2
 class TestFleetStart(base.VmsIntegrationTest):
     def setUp(self):
         for log_filename in self.list_docker_mock_log_filenames():
-            os.remove(log_filename)
+            try:
+                os.remove(log_filename)
+            except FileNotFoundError:
+                continue
         super().setUp()
 
     def test_start_fleet(self):
