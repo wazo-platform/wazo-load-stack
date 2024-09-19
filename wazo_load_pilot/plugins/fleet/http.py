@@ -20,16 +20,20 @@ async def run_on_all_gateways(config: dict, command: str) -> dict:
     hostnames = config.get('gateways') or []
     tasks = (run_command(host, command) for host in hostnames)
     results = await asyncio.gather(*tasks, return_exceptions=True)
+    errors = []
 
     for i, result in enumerate(results, 1):
         if isinstance(result, Exception):
             print('Task %d failed: %s', i, str(result))
-            raise HTTPException(status_code=500, detail=str(result))
+            errors.append(str(result))
         elif result.exit_status != 0:
             print('Task %d exited with status %s', i, result.exit_status)
-            raise HTTPException(status_code=500, detail=str(result))
+            errors.append(str(result))
         else:
             print('Task %d succeeded', i)
+
+    if errors:
+        raise HTTPException(status_code=500, detail=str(errors))
 
     return {'message': 'success'}
 
