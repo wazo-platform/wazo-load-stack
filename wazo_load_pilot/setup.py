@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2023 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2023-2024 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from setuptools import find_packages, setup
@@ -19,6 +19,7 @@ setup(
             f'{NAME}=main:main',
         ],
         'wlpd_plugins': [
+            'fleet = plugins.fleet.plugin:Plugin',
             'pilot = plugins.pilot.plugin:Plugin',
             'status = plugins.status.plugin:Plugin',
         ],

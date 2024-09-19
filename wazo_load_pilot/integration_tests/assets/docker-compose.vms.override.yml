@@ -1,0 +1,18 @@
+services:
+  sync:
+    depends_on:
+      - wlpd
+      - trafgen1
+      - trafgen2
+    environment:
+      TARGETS: "wlpd:9990 trafgen1:22 trafgen2:22"
+  wlpd:
+    volumes:
+      - "./vms/etc/wazo-load-pilot/conf.d/override.yml:/etc/wazo-load-pilot/conf.d/override.yml"
+      - "./vms/mykey:/root/.ssh/id_ecdsa"
+  trafgen1:
+    volumes:
+      - "./vms/logs/1:/tmp/logs"
+  trafgen2:
+    volumes:
+      - "./vms/logs/2:/tmp/logs"

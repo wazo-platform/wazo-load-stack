@@ -1,0 +1,6 @@
+services:
+  sync:
+    depends_on:
+      - wlpd
+    environment:
+      TARGETS: "wlpd:9990"
