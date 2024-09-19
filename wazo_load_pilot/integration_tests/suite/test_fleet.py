@@ -27,6 +27,7 @@ class TestFleetStart(base.VmsIntegrationTest):
         response = requests.get(url, verify=False)
 
         assert response.status_code == 200
+        assert response.json() == {'message': 'success'}
 
         for log_filename in self.list_docker_mock_log_filenames():
             with open(log_filename) as f:
@@ -34,6 +35,23 @@ class TestFleetStart(base.VmsIntegrationTest):
                 assert (
                     content
                     == '/usr/bin/docker compose -f /etc/trafgen/docker-compose.yml up -d'
+                )
+
+    def test_stop_fleet(self):
+        port = self.asset_cls.service_port(9990)
+        url = f'https://127.0.0.1:{port}/fleet/stop'
+
+        response = requests.get(url, verify=False)
+
+        assert response.status_code == 200
+        assert response.json() == {'message': 'success'}
+
+        for log_filename in self.list_docker_mock_log_filenames():
+            with open(log_filename) as f:
+                content = f.read().strip()
+                assert (
+                    content
+                    == '/usr/bin/docker compose -f /etc/trafgen/docker-compose.yml down'
                 )
 
     def list_docker_mock_log_filenames(self):
