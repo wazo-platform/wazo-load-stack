@@ -1,6 +1,6 @@
 - project:
     templates:
-      - wazo-tox-linters-310
+      - wazo-tox-linters-py311
     wazo-check:
       jobs:
         - wazo-load-cli-unittests
@@ -17,28 +17,28 @@
 - job:
     name: wazo-load-cli-unittests
     description: Runs unittests for wazo-load-cli
-    parent: wazo-tox-py39
+    parent: wazo-tox-py311
     vars:
       tox_envlist: cli
 
 - job:
     name: wazo-load-pilot-unittests
     description: Runs unittests for wazo-load-pilot
-    parent: wazo-tox-py39
+    parent: wazo-tox-py311
     vars:
       tox_envlist: pilot
 
 - job:
     name: wazo-load-api-unittests
     description: Runs unittests for wazo-load-api
-    parent: wazo-tox-py39
+    parent: wazo-tox-py311
     vars:
       tox_envlist: api
 
 - job:
     name: wazo-load-pilot-integration-tests
     description: Runs integration tests for wazo-load-pilot
-    parent: wazo-tox-integration-py39
+    parent: wazo-tox-integration-py311
     vars:
       tox_envlist: pilot_integration
       docker_install_siblings: false

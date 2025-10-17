@@ -1,5 +1,5 @@
-FROM python:3.10-bullseye AS builder
-RUN python3.10 -m venv /opt/venv
+FROM python:3.11-bookworm AS builder
+RUN python3.11 -m venv /opt/venv
 # Activate virtual env
 ENV PATH="/opt/venv/bin:$PATH"
 
@@ -30,14 +30,14 @@ COPY wlapi/wda/package*.json ./
 RUN npm install
 COPY wlapi/wda/* ./
 
-# INSTALL PYTHON 3.10
+# INSTALL PYTHON 3.11
 WORKDIR /
-RUN  apt update && apt -y upgrade && \
+RUN apt update && apt -y upgrade && \
     apt -y install build-essential zlib1g-dev libncurses5-dev \
-	libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev \
+    libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev \
     libsqlite3-dev wget libbz2-dev python3-pip && \
-    wget https://www.python.org/ftp/python/3.10.12/Python-3.10.12.tgz && \
-    tar -xf Python-3.10.*.tgz && cd Python-3.10.*/ && \
+    wget https://www.python.org/ftp/python/3.11.14/Python-3.11.14.tgz && \
+    tar -xf Python-3.11.*.tgz && cd Python-3.11.*/ && \
     ./configure --prefix=/usr/local --enable-optimizations --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib" && \
     make -j $(nproc) && make altinstall
 

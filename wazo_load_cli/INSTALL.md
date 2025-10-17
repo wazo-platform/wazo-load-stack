@@ -12,7 +12,7 @@ cd wazo_load_cli
 ```
 3 - create and activate a virtualenv
 ```
-python3.10 -m venv ~/.wlctl
+python3.11 -m venv ~/.wlctl
 source /tmp/wlctl/bin/activate
 ```
 4 - install wlctl

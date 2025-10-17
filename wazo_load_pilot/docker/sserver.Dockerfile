@@ -1,4 +1,4 @@
-FROM python:3.10-bullseye
+FROM python:3.11-bookworm
 
 RUN mkdir /tests
 COPY etc/wazo-load-pilot/private.key /tests/private.key
