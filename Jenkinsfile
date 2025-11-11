@@ -1,5 +1,7 @@
 pipeline {
-  agent any
+  agent {
+    label 'general-debian12-medium'
+  }
   triggers {
     githubPush()
     pollSCM('H H * * *')
