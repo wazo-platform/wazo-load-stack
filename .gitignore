@@ -2,6 +2,7 @@
 *.pyc
 .tox
 build
+wazo_load_api/wlapi/docker/Dockerfile
 wazo_load_pilot/docker/pilot.Dockerfile
 wazo_load_pilot/integration_tests/assets/vms/logs/*
 wazo_load_pilot/integration_tests/assets/vms/mykey*
