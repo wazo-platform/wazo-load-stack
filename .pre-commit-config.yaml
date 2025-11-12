@@ -14,6 +14,7 @@ repos:
     rev: v0.991
     hooks:
       - id: mypy
+        exclude: "setup.py"
         language_version: "3.11"
         additional_dependencies: ["types-pytz", "types-requests", "types-PyYaml"]
   # Automatically update to modern python (as modern as allowed by your Python version)
