@@ -1,4 +1,4 @@
-# Copyright 2023-2024 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2023-2025 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import asyncio
@@ -16,7 +16,7 @@ from ..commands import (
 
 
 @patch(
-    'wazo_load_pilot.plugins.pilot.commands.httpx.AsyncClient.post',
+    'wlpd.plugins.pilot.commands.httpx.AsyncClient.post',
     return_value=httpx.Response(200, json={"response": "success"}),
 )
 def test_cmd_send(async_post_mock):

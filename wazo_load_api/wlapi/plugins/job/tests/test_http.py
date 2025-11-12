@@ -1,7 +1,6 @@
 import requests_mock
 from fastapi.testclient import TestClient
-
-from wazo_load_pilot.plugins.pilot.commands import SendCmd
+from wlpd.plugins.pilot.commands import SendCmd
 
 from ..http import router
 

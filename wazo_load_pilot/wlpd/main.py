@@ -1,9 +1,12 @@
-#!/usr/bin/env python3
+# Copyright 2023-2025 The Wazo Authors  (see the AUTHORS file)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import sys
 
-from config import load_config
-from controller import Controller
 from xivo.xivo_logging import get_log_level_by_name, setup_logging
+
+from .config import load_config
+from .controller import Controller
 
 
 def main():

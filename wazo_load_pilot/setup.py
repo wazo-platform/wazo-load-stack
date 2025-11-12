@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2023-2024 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2023-2025 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from setuptools import find_packages, setup
@@ -13,15 +13,15 @@ setup(
     author_email='dev@wazo.io',
     url='https://wazo-platform.org',
     packages=find_packages(),
-    package_data={'plugins': ['*/api.yml']},
+    package_data={'wlpd.plugins': ['*/api.yml']},
     entry_points={
         'console_scripts': [
-            f'{NAME}=main:main',
+            f'{NAME}=wlpd.main:main',
         ],
         'wlpd_plugins': [
-            'fleet = plugins.fleet.plugin:Plugin',
-            'pilot = plugins.pilot.plugin:Plugin',
-            'status = plugins.status.plugin:Plugin',
+            'fleet = wlpd.plugins.fleet.plugin:Plugin',
+            'pilot = wlpd.plugins.pilot.plugin:Plugin',
+            'status = wlpd.plugins.status.plugin:Plugin',
         ],
     },
 )
