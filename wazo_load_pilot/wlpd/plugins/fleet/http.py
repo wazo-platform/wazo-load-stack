@@ -1,4 +1,4 @@
-# Copyright 2024 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2024-2026 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import asyncio
@@ -23,7 +23,7 @@ async def run_on_all_gateways(config: dict, command: str) -> dict:
     errors = []
 
     for i, result in enumerate(results, 1):
-        if isinstance(result, Exception):
+        if isinstance(result, BaseException):
             print('Task %d failed: %s', i, str(result))
             errors.append(str(result))
         elif result.exit_status != 0:
