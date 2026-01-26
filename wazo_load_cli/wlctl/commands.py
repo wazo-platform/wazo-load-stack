@@ -1,4 +1,4 @@
-# Copyright 2023 The Wazo Authors  (see the AUTHORS file)
+# Copyright 2023-2024 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import json
@@ -146,3 +146,21 @@ def compose(input, output):
         print(f"Malformed ini file: {e}")
         sys.exit(1)
     cmp.generate_compose_file()
+
+
+@click.group()
+def fleet():
+    """Subcommand to manage the container fleet"""
+    pass
+
+
+@fleet.command()
+@click.pass_context
+def start(ctx: click.Context) -> None:
+    """Start the containers on the cluster VM"""
+    config = ctx.obj
+    pilot_baseurl = config.get("DEFAULT", "pilot")
+    url = f"{pilot_baseurl}/fleet/start"
+    response = send_query(url)
+    response.raise_for_status()
+    print(json.dumps(response.json()))
